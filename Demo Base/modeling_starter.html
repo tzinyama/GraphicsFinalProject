@@ -53,31 +53,61 @@ var heldKeys = {
   right: false,
 }
 
-var xDamp = .1;
-var heroAccel = .5;
-var maxSpeed = 3;
+// var xDamp = .1;
+// var heroAccel = .01;
+// var maxSpeed = .5;
 
 var hero = {
   x: 0,
   y: 0,
-  xVel: 1,
+  hHeight: 1,
+  hWidth: .75,
+  xVel: 0,
   yVel: 0,
+  accel: .02,
+  maxSpeed: .3,
+  xdamp: .2,
+  onGround: true,
   model: new THREE.Mesh(
     new THREE.BoxGeometry(.75,1,.75),
     new THREE.MeshLambertMaterial( { color: 0xFF0000 } )
   ),
   update: function(){
-    this.x+=this.xVel;
-    this.y+=this.yVel;
-    if(this.xVel!=0){
+    if(this.xVel!=0 && ((!heldKeys.right && !heldKeys.left) || (heldKeys.right && heldKeys.left))){
       this.xVel = this.xVel*.5;
     }
+    if(heldKeys.left && !heldKeys.right){
+      accelLeft(this.accel);
+    }
+    if(heldKeys.right && !heldKeys.left){
+      accelRight(this.accel);
+    }
+    this.x+=this.xVel;
+    this.y+=this.yVel;
     this.model.position.x = this.x;
     this.model.position.y = this.y;
-    console.log("hello!");
+    if(this.x >7) this.x = -7;
+    if(this.x <-7) this.x = 7;
   }
 }
 
+function accelRight(n){
+  if(hero.xVel < 0 && hero.onGround){
+    hero.xVel = 0;
+  }
+  hero.xVel += n;
+  if(hero.xVel > hero.maxSpeed){
+    hero.xVel = hero.maxSpeed;}
+}
+
+function accelLeft(n){
+  if(hero.xVel > 0 && hero.onGround){
+    hero.xVel = 0;
+  }
+  hero.xVel -= n;
+  if(hero.xVel < -1*hero.maxSpeed){
+    hero.xVel = -1*hero.maxSpeed;}
+}
 
 
 
@@ -120,6 +150,7 @@ function createScene() {
 
   var world = createWorld(car);
   models[WORLD] = world;
+  models[currentModel].rotation.set(0.2,0,0);
   scene.add(models[WORLD]);
 }
 
@@ -148,6 +179,7 @@ function createWorld(carModel) {
    //   new THREE.MeshLambertMaterial( { color: 0xFF0000 } )
    // );
    //hero.position.y = 0.5;
+   hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
    // var road = new THREE.Mesh(
    //     new THREE.RingGeometry(3.3,4.8,64,1),
@@ -199,8 +231,8 @@ function updateForFrame() {
     ax2.rotation.z += 0.05;
   }
   if (currentModel == WORLD) {
-    console.log("hello!");
     hero.update();
+    hero.model.position.y += hero.hHeight/2;
 
   } else {
     sphereRotator.rotation.y += 0.03;
@@ -248,10 +280,10 @@ function doKey(event) {
   var code = event.code;
   var rotated = true;
   switch( code ) {
-      case "ArrowLeft": accelLeft(heroAccel);  break;    // left arrow
-      case "ArrowRight":  accelRight(heroAccel);  break;    // right arrow
-      case "ArrowUp":  models[currentModel].rotation.x -= 0.03;  break;    // up arrow
-      case "ArrowDown":  models[currentModel].rotation.x += 0.03;  break;    // down arrow
+      case "ArrowLeft": heldKeys.left = true;  break;    // left arrow
+      case "ArrowRight":  heldKeys.right = true;  break;    // right arrow
+      case "ArrowUp":  heldKeys.up = true;  break;    // up arrow
+      case "ArrowDown":  heldKeys.down = true;  break;    // down arrow
       case "PageUp":  models[currentModel].rotation.z -= 0.03;  break;    // page up
       case "PageDown":  models[currentModel].rotation.z += 0.03;  break;    // page down
       case "Home":  models[currentModel].rotation.set(0.2,0,0); break;  // home
@@ -265,16 +297,18 @@ function doKey(event) {
   }
 }
 
-function accelRight(n){
-  hero.xVel += n;
-  if(hero.xVel > maxSpeed){
-    hero.xVel = maxSpeed;}
-}
-
-function accelLeft(n){
-  hero.xVel -= n;
-  if(hero.xVel < -1*maxSpeed){
-    hero.xVel = -1*maxSpeed;}
+function doKeyUp(event) {
+  var code = event.code;
+  switch( code ) {
+      case "ArrowLeft": heldKeys.left = false;  break;    // left arrow
+      case "ArrowRight":  heldKeys.right = false;  break;    // right arrow
+      case "ArrowUp":  heldKeys.up = false;  break;    // up arrow
+      case "ArrowDown":  heldKeys.down = false;  break;    // down arrow
+      case "PageUp":  models[currentModel].rotation.z -= 0.03;  break;    // page up
+      case "PageDown":  models[currentModel].rotation.z += 0.03;  break;    // page down
+      case "Home":  models[currentModel].rotation.set(0.2,0,0); break;  // home
+      default: rotated = false;
+  }
 }
 
 
@@ -307,6 +341,10 @@ function doChangeModel() {
 
 
 
+
+
+
+// Older code
 
 // what is it?
 function createStarter() {
@@ -480,6 +518,7 @@ function init() {
   }
 
   document.addEventListener("keydown", doKey, false);
+  document.addEventListener("keyup", doKeyUp, false);
   document.getElementById("animate").checked = false;
   document.getElementById("animate").onchange = doAnimateCheckbox;
   document.getElementById("diskworld").checked = true;
