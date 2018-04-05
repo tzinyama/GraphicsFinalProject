@@ -60,6 +60,7 @@ var hero = {
   jumpHoldMax: 10,
   canDoubleJump: false,
   haveDoubleJumped: false,
+  facingRight: true,
   model: new THREE.Mesh(
     new THREE.BoxGeometry(.75,1,.75),
     new THREE.MeshLambertMaterial( { color: 0xFF0000 } )
@@ -86,10 +87,12 @@ var hero = {
     this.model.position.y = this.y;
     if(this.x >12) this.x = -12;
     if(this.x <-12) this.x = 12;
+    if(this.facingRight) this.model.rotation.set(0,.3,0);
+    else this.model.rotation.set(0,-.3,0);
   },
 
   jump: function(){
-    if(this.onGround){  // && this.jumpHold > 0
+    if(this.onGround){
       this.yVel += .2;
       this.onGround = false;
     } else if( this.jumpHold > 0 ){
@@ -99,7 +102,7 @@ var hero = {
       this.yVel = .2;
       this.canDoubleJump = false;
       this.haveDoubleJumped = true;
-      this.jumpHold = this.jumpHoldMax;
+      this.jumpHold = this.jumpHoldMax/2;
     }
   }
 }
@@ -156,6 +159,7 @@ function createScene() {
 
   // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
   camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
+  // camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
   camera.position.z = 15;
 
   // create some lights and add them to the scene.
@@ -193,14 +197,10 @@ function createScene() {
 
 
 function createWorld(carModel) {
-   // Create the main diskworld model.
+   // Create the game world
+
    var worldModel = new THREE.Object3D();
 
-   // The base of the world; everything else is on the top of this cylinder.
-   // var ground = new THREE.Mesh(
-   //      new THREE.CylinderGeometry(5.5, 5.5, 0.5, 64, 1),
-   //      new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-   // );
    var platform = new THREE.Mesh(
             new THREE.BoxGeometry(20,1,1.5),
             new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
@@ -209,35 +209,9 @@ function createWorld(carModel) {
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
    worldModel.add(platform);   //0 child
 
-   // hero.model = new THREE.Mesh(
-   //   new THREE.BoxGeometry(.75,1,.75),
-   //   new THREE.MeshLambertMaterial( { color: 0xFF0000 } )
-   // );
-   //hero.position.y = 0.5;
+
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
-   // var road = new THREE.Mesh(
-   //     new THREE.RingGeometry(3.3,4.8,64,1),
-   //     new THREE.MeshLambertMaterial( { color: 0x777799 })
-   // );
-   //
-   // road.rotation.x = -Math.PI/2;
-   // diskworldModel.add(road);    //1st child
-   //
-   //
-   // var diskCar = carModel.clone();
-   // // First two children are the axles; we need these to animate them.
-   // // diskworldAxle1 = diskCar.children[0];
-   // // diskworldAxle2 = diskCar.children[1];
-   // diskCar.scale.set(0.3,0.3,0.3);
-   //
-   // // puts car on the road, near the edge of the disk.
-   // diskCar.position.set(0,0.3,-4);
-   // // rotating carRotator about the y-axis will move the car along the road.
-   //
-   // var carRotator = new THREE.Object3D();
-   // carRotator.add(diskCar);
-   // diskworldModel.add(carRotator);
 
    return worldModel;
 
@@ -315,14 +289,10 @@ function doKey(event) {
   var code = event.code;
   var rotated = true;
   switch( code ) {
-      case "ArrowLeft": heldKeys.left = true;  break;    // left arrow
-      case "ArrowRight":  heldKeys.right = true;  break;    // right arrow
+      case "ArrowLeft": heldKeys.left = true; hero.facingRight = false;  break;    // left arrow
+      case "ArrowRight":  heldKeys.right = true; hero.facingRight = true; break;    // right arrow
       case "ArrowUp":  heldKeys.up = true;  break;    // up arrow
       case "ArrowDown":  heldKeys.down = true;  break;    // down arrow
-      case "PageUp":  models[currentModel].rotation.z -= 0.03;  break;    // page up
-      case "PageDown":  models[currentModel].rotation.z += 0.03;  break;    // page down
-      case "Home":  models[currentModel].rotation.set(0.2,0,0); break;  // home
-      default: rotated = false;
   }
   if (rotated) {
     event.preventDefault();  // Prevent keys from scrolling the page.
@@ -339,10 +309,6 @@ function doKeyUp(event) {
       case "ArrowRight":  heldKeys.right = false;  break;    // right arrow
       case "ArrowUp":  heldKeys.up = false; upRelease(); break;    // up arrow
       case "ArrowDown":  heldKeys.down = false;  break;    // down arrow
-      case "PageUp":  models[currentModel].rotation.z -= 0.03;  break;    // page up
-      case "PageDown":  models[currentModel].rotation.z += 0.03;  break;    // page down
-      case "Home":  models[currentModel].rotation.set(0.2,0,0); break;  // home
-      default: rotated = false;
   }
 }
 
@@ -371,12 +337,6 @@ function doChangeModel() {
       }
    }
 }
-
-
-
-
-
-
 
 
 // Older code
