@@ -55,7 +55,7 @@ function createScene() {
 
   // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
   camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
-   // camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
+   camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
   camera.position.z = 15;
 
   // create some lights and add them to the scene.
@@ -63,10 +63,15 @@ function createScene() {
   // dim light shining from above
   scene.add( new THREE.DirectionalLight( 0xffffff, 0.4 ) );
   // a light to shine in the direction the camera faces
-  var viewpointLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+  var viewpointLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
   viewpointLight.position.set(0,0,1);  // shines down the z-axis
   scene.add(viewpointLight);
 
+  var hemisphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000, .9)
+  scene.add(hemisphereLight);
+
+  var ambientLight = new THREE.AmbientLight(0x9999dc, .5);
+  scene.add(ambientLight);
   // //create the model
   // var model = createTree();
   //
@@ -85,7 +90,7 @@ function createScene() {
   var world = createWorld();
   models[WORLD] = world;
   models[currentModel].rotation.set(0.2,0,0);
-  models[currentModel].position.y -= 3
+  models[currentModel].position.y -= 2
   scene.add(models[WORLD]);
 }
 
@@ -137,7 +142,7 @@ function updateForFrame() {
   // }
   if (currentModel == WORLD) {
     hero.update();
-    hero.model.position.y += hero.hHeight/2;
+    //hero.model.position.y += hero.hHeight/2;
   }
   // } else {
   //   sphereRotator.rotation.y += 0.03;
