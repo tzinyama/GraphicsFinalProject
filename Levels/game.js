@@ -6,6 +6,68 @@ var scene,
 
 var hemisphereLight, shadowLight;
 
+//-------------------------------Level Editing-----------------------------//
+// levels a based on a 1280*720 resolution
+var DEFAULT_WIDTH = 1000;
+var DEFAULT_HEIGHT = 800;
+
+var CELL_WIDTH = 100;
+var CELL_HEIGHT = 100;
+
+var PLATFORM = "#";
+var COIN = "o";
+
+var level1 = `
+..........
+....####..
+..........
+..oo......
+.####.....
+..........
+....####..
+..........
+`;
+
+function createGameElement(item, row, col){
+  var material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
+  var geometry;
+
+  if(item === PLATFORM){
+    geometry = new THREE.BoxGeometry(5,5,0);
+  }
+  else if(item === COIN){
+    geometry = new THREE.SphereGeometry(1,20,20);
+  }
+
+  var gameElement = new THREE.Mesh(geometry, material);
+
+  // this is wrong. Need actual transformations
+  var x = (col * CELL_WIDTH / 10) + CELL_WIDTH / 2 ;
+  var y = (row * CELL_HEIGHT / 10) + CELL_HEIGHT / 2;
+
+  gameElement.position.x = x;
+  gameElement.position.y = y;
+
+  return gameElement;
+}
+
+function createLevel(layout){
+  let grid = layout.trim().split("\n").map(l => [...l]);
+  let numRows = grid.length;
+  let numCols = grid[0].length;
+
+  var char;
+  for(var row = 0; row < numRows; row++){
+    for(var col = 0; col < numCols; col++){
+      char = grid[row][col];
+
+      if(char !== "."){
+        scene.add(createGameElement(char, row, col));
+      }
+    }
+  }
+}
+
 function createPlatform() {
    var platform = new THREE.Mesh(
             new THREE.BoxGeometry(5,5,0),
@@ -13,6 +75,9 @@ function createPlatform() {
           );
    scene.add(platform);
 }
+
+
+//-------------------------------Lighting-----------------------------//
 
 function createLights() {
 	// A hemisphere light is a gradient colored light;
@@ -50,8 +115,11 @@ function createLights() {
 
 
 function createScene() {
-	HEIGHT = window.innerHeight;
-	WIDTH = window.innerWidth;
+	// HEIGHT = window.innerHeight;
+	// WIDTH = window.innerWidth;
+
+  WIDTH = DEFAULT_WIDTH;
+  HEIGHT = DEFAULT_HEIGHT;
 
 	scene = new THREE.Scene();
 
@@ -69,7 +137,7 @@ function createScene() {
 
 	// Set the position of the camera
 	camera.position.x = 0;
-	camera.position.z = 100;
+	camera.position.z = 300;
 	camera.position.y = 0;
 
 	// Create the renderer
@@ -84,6 +152,9 @@ function createScene() {
 	// container we created in the HTML
 	container = document.getElementById('world');
 	container.appendChild(renderer.domElement);
+
+  // set screen to current values
+  handleWindowResize();
 
 	// Listen to the screen: if the user resizes it
 	// we have to update the camera and the renderer size
@@ -118,7 +189,9 @@ function init() {
 
 	// add game elements
 	createLights();
-  createPlatform();
+  // createPlatform();
+
+  createLevel(level1);
 
 	loop();
 }
