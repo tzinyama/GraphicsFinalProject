@@ -13,8 +13,10 @@ var hero = {
   xdamp: .2,
   jumpSpeed: .02,
   onGround: true,
+  wasOnGround: true,
   jumpHold: 10,
   jumpHoldMax: 10,
+  jumped: false,
   canDoubleJump: false,
   haveDoubleJumped: false,
   facingRight: true,
@@ -99,9 +101,11 @@ var hero = {
       //console.log("down collide");
       //console.log(collisionResults[0].distance);
     }
-    else {
-      this.onGround = false;
+    else if (this.wasOnGround && !this.jumped){
+      this.wasOnGround = false;
       this.canDoubleJump = true;
+      this.onGround = false;
+      this.jumpHold = 0;
     }
 
     //Actually update model position
@@ -112,6 +116,7 @@ var hero = {
 
   jump: function(){
     if(this.onGround){
+      this.jumped = true;
       this.yVel += .2;
       this.onGround = false;
     } else if( this.jumpHold > 0 ){
@@ -157,7 +162,9 @@ function moveY(){
 }*/
 
 function land(){
+  hero.jumped = false;
   hero.onGround = true;
+  hero.wasOnGround = true;
   hero.yVel = 0;
   hero.jumpHold = hero.jumpHoldMax;
   hero.canDoubleJump = false;
