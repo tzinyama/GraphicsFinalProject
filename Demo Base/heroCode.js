@@ -6,10 +6,6 @@ var hero = {
   y: 0,
   hHeight: 1,
   hWidth: .75,
-  colTop: 0,
-  colBot: 0,
-  colRight: 0,
-  colLeft: 0,
   xVel: 0,
   yVel: 0,
   accel: .015,
@@ -27,14 +23,13 @@ var hero = {
   model: createHeroModel(),
   update: function(){
 
-    //Update player position
-    this.x+=this.xVel;
-    hero.y += hero.yVel;
 
 
     //Screen loop
     if(this.x >12) this.x = -12;
     if(this.x <-12) this.x = 12;
+    if(this.y <-12) this.y = 12;
+
     //Model rotation
     if(this.facingRight) this.model.rotation.set(0,.7,0);
     else this.model.rotation.set(0,-.7,0);
@@ -85,26 +80,28 @@ var hero = {
       }
     }
 
+    //Update player position
+    this.x+=this.xVel;
+    hero.y += hero.yVel;
+
+
     //Gravity is always applied
     this.yVel -= .02;
 
 
-    //handle collisions
-    this.colTop= this.y+this.hHeight;
-    this.colBot= this.y;
-    this.colRight= this.x+this.hWidth;
-    this.colLeft= this.x;
-    var contactX = false;
-    var contactYBot = false;
-    var contactYTop = false;
 
-    var originPoint = new THREE.Vector3(this.x, this.y, 0);
-    var downRay = new THREE.Raycaster(originPoint, new THREE.Vector3(0,-1,0), 0, 2);
+    var originPoint = new THREE.Vector3(this.x+.25, this.y, 0);
+    var downRay = new THREE.Raycaster(originPoint, new THREE.Vector3(0,-1,0),0, 2);
     var collisionResults = downRay.intersectObjects( collidableMeshList );
     if ( collisionResults.length > 0 && this.yVel < 0){
       land();
-      console.log("down collide");
-      console.log(collisionResults[0].distance);
+      this.y += 2-collisionResults[0].distance;
+      //console.log("down collide");
+      //console.log(collisionResults[0].distance);
+    }
+    else {
+      this.onGround = false;
+      this.canDoubleJump = true;
     }
 
     //Actually update model position
