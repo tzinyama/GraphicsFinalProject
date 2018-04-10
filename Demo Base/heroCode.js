@@ -6,6 +6,10 @@ var hero = {
   y: 0,
   hHeight: 1,
   hWidth: .75,
+  colTop: 0,
+  colBot: 0,
+  colRight: 0,
+  colLeft: 0,
   xVel: 0,
   yVel: 0,
   accel: .015,
@@ -22,25 +26,45 @@ var hero = {
   walking: false,
   model: createHeroModel(),
   update: function(){
+
+    //Update player position
+    this.x+=this.xVel;
+    hero.y += hero.yVel;
+
+
+    //Screen loop
+    if(this.x >12) this.x = -12;
+    if(this.x <-12) this.x = 12;
+    //Model rotation
+    if(this.facingRight) this.model.rotation.set(0,.7,0);
+    else this.model.rotation.set(0,-.7,0);
+
+
     if(this.xVel!=0 && ((!heldKeys.right && !heldKeys.left) || (heldKeys.right && heldKeys.left)) && this.onGround){
       this.xVel = this.xVel*.5;
       this.walking = false;
     }
+
     if(this.xVel!=0 && ((!heldKeys.right && !heldKeys.left) || (heldKeys.right && heldKeys.left)) && !this.onGround){
       this.xVel = this.xVel*.9;
       this.walking = false;
     }
+    //Walking left
     if(heldKeys.left && !heldKeys.right){
       accelLeft(this.accel);
       this.walking = true;
     }
+    //Walking right
     if(heldKeys.right && !heldKeys.left){
       accelRight(this.accel);
       this.walking = true;
     }
+    //Jumping
     if(heldKeys.up || heldKeys.space){
       this.jump();
     }
+
+
 
     this.animTicker = (this.animTicker+this.xVel) % 1000000;
     if(this.walking){
@@ -60,14 +84,33 @@ var hero = {
         this.model.head.rotation.x += (this.model.head.rotation.x -.25)/20;
       }
     }
-    this.x+=this.xVel;
-    moveY();
+
+    //Gravity is always applied
+    this.yVel -= .02;
+
+
+    //handle collisions
+    this.colTop= this.y+this.hHeight;
+    this.colBot= this.y;
+    this.colRight= this.x+this.hWidth;
+    this.colLeft= this.x;
+    var contactX = false;
+    var contactYBot = false;
+    var contactYTop = false;
+
+    var originPoint = new THREE.Vector3(this.x, this.y, 0);
+    var downRay = new THREE.Raycaster(originPoint, new THREE.Vector3(0,-1,0), 0, 2);
+    var collisionResults = downRay.intersectObjects( collidableMeshList );
+    if ( collisionResults.length > 0 && this.yVel < 0){
+      land();
+      console.log("down collide");
+      console.log(collisionResults[0].distance);
+    }
+
+    //Actually update model position
     this.model.position.x = this.x;
     this.model.position.y = this.y;
-    if(this.x >12) this.x = -12;
-    if(this.x <-12) this.x = 12;
-    if(this.facingRight) this.model.rotation.set(0,.7,0);
-    else this.model.rotation.set(0,-.7,0);
+
   },
 
   jump: function(){
@@ -106,6 +149,7 @@ function accelLeft(n){
     hero.xVel = -1*hero.maxSpeed;}
 }
 
+/*
 function moveY(){
   hero.y += hero.yVel;
   hero.yVel -= .02;
@@ -113,7 +157,7 @@ function moveY(){
     hero.y = 0;
     land();
   }
-}
+}*/
 
 function land(){
   hero.onGround = true;

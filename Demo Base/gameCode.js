@@ -37,6 +37,9 @@ var sphereRotator;  // The sphere is a child of this object; rotating
 
 var animating = false;  // This is set to true when an animation is running.
 
+var collidableMeshList = [];
+
+
 var heldKeys = {
   up: false,
   down: false,
@@ -106,6 +109,7 @@ function createWorld() {
             new THREE.BoxGeometry(20,1,1.5),
             new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
           );
+   collidableMeshList[0] = platform;
 
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
    worldModel.add(platform);   //0 child
