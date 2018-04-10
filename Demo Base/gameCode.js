@@ -39,6 +39,7 @@ var animating = false;  // This is set to true when an animation is running.
 
 var collidableMeshList = [];
 
+var clock = 0;
 
 var heldKeys = {
   up: false,
@@ -145,6 +146,7 @@ function updateForFrame() {
   //   ax2.rotation.z += 0.05;
   // }
   if (currentModel == WORLD) {
+    clock = (clock + 1)%1000000;
     hero.update();
     //hero.model.position.y += hero.hHeight/2;
   }

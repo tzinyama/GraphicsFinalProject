@@ -109,9 +109,16 @@ var hero = {
       this.jumpHold = this.jumpHoldMax/2;
     }
   },
-  
+
   animate: function(){        //Move parts of hero model
     this.animTicker = (this.animTicker+this.xVel) % 1000000;
+    if(clock % 300 < 8){
+      this.model.head.eyes.scale.set(1,0.2,1);
+      this.model.head.eyes.position.y = -.5;
+    } else{
+      this.model.head.eyes.scale.set(1,1,1);
+      this.model.head.eyes.position.y = 0;
+    }
     if(this.walking){
       this.model.rightArm.rotation.x = Math.sin(2.5*this.animTicker)/2;
       this.model.leftArm.rotation.x = -1* Math.sin(2.5*this.animTicker)/2;
