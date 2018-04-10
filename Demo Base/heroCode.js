@@ -61,27 +61,6 @@ var hero = {
       this.jump();
     }
 
-
-
-    this.animTicker = (this.animTicker+this.xVel) % 1000000;
-    if(this.walking){
-      this.model.rightArm.rotation.x = Math.sin(2.5*this.animTicker)/2;
-      this.model.leftArm.rotation.x = -1* Math.sin(2.5*this.animTicker)/2;
-      this.model.rightLeg.position.y = 1.5 + Math.sin(2.5*this.animTicker)/2;
-      this.model.leftLeg.position.y = 1.5 - Math.sin(2.5*this.animTicker)/2;
-      if(this.model.head.rotation.x < -.1){
-        this.model.head.rotation.x -= (this.model.head.rotation.x)/20;
-      }
-    } else {
-      this.model.rightArm.rotation.x = 0;
-      this.model.leftArm.rotation.x = 0;
-      this.model.rightLeg.position.y = 1.5;
-      this.model.leftLeg.position.y = 1.5;
-      if(this.model.head.rotation.x > -.25){
-        this.model.head.rotation.x += (this.model.head.rotation.x -.25)/20;
-      }
-    }
-
     //Update player position
     this.x+=this.xVel;
     hero.y += hero.yVel;
@@ -111,6 +90,7 @@ var hero = {
     //Actually update model position
     this.model.position.x = this.x;
     this.model.position.y = this.y;
+    this.animate();
 
   },
 
@@ -127,6 +107,29 @@ var hero = {
       this.canDoubleJump = false;
       this.haveDoubleJumped = true;
       this.jumpHold = this.jumpHoldMax/2;
+    }
+  },
+  
+  animate: function(){        //Move parts of hero model
+    this.animTicker = (this.animTicker+this.xVel) % 1000000;
+    if(this.walking){
+      this.model.rightArm.rotation.x = Math.sin(2.5*this.animTicker)/2;
+      this.model.leftArm.rotation.x = -1* Math.sin(2.5*this.animTicker)/2;
+      this.model.rightLeg.position.y = 1.5 + Math.sin(2.5*this.animTicker)/2;
+      this.model.leftLeg.position.y = 1.5 - Math.sin(2.5*this.animTicker)/2;
+
+      if(this.model.head.rotation.x < -.1){
+        this.model.head.rotation.x -= (this.model.head.rotation.x)/20;
+      }
+
+    } else {
+      this.model.rightArm.rotation.x = 0;
+      this.model.leftArm.rotation.x = 0;
+      this.model.rightLeg.position.y = 1.5;
+      this.model.leftLeg.position.y = 1.5;
+      if(this.model.head.rotation.x > -.25){
+        this.model.head.rotation.x += (this.model.head.rotation.x -.25)/20;
+      }
     }
   }
 }
