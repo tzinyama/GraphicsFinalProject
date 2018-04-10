@@ -9,41 +9,48 @@ var hemisphereLight, shadowLight;
 //-------------------------------Level Editing-----------------------------//
 // levels a based on a 1280*720 resolution
 var DEFAULT_WIDTH = 1000;
-var DEFAULT_HEIGHT = 800;
+var DEFAULT_HEIGHT = 1000;
 
-var CELL_WIDTH = 100;
-var CELL_HEIGHT = 100;
+var NUM_GRID_ROWS = 20;
+var NUM_GRID_COLS = 10;
+
+var CELL_WIDTH = DEFAULT_WIDTH / NUM_GRID_COLS;
+var CELL_HEIGHT = DEFAULT_HEIGHT / NUM_GRID_COLS;
 
 var PLATFORM = "#";
 var COIN = "o";
 
 var level1 = `
-..........
-....####..
-..........
-..oo......
-.####.....
-..........
-....####..
-..........
+....................
+....####....#####...
+....................
+..oo.......ooo......
+.####.....######..##
+....................
+...oo...........o...
+..######.......###..
+............oo......
+######.....####.....
 `;
 
 function createGameElement(item, row, col){
-  var material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
+	// row 0 is the last line of the level string
+  var material;
   var geometry;
 
   if(item === PLATFORM){
-    geometry = new THREE.BoxGeometry(5,5,0);
+		material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
+    geometry = new THREE.BoxGeometry(CELL_WIDTH,CELL_HEIGHT/2,0);
   }
   else if(item === COIN){
-    geometry = new THREE.SphereGeometry(1,20,20);
+		material = new THREE.MeshLambertMaterial( { color: 0xFFFF00 } );
+    geometry = new THREE.SphereGeometry(CELL_WIDTH/4,20,20);
   }
 
   var gameElement = new THREE.Mesh(geometry, material);
 
-  // this is wrong. Need actual transformations
-  var x = (col * CELL_WIDTH / 10) + CELL_WIDTH / 2 ;
-  var y = (row * CELL_HEIGHT / 10) + CELL_HEIGHT / 2;
+  var x = (col * CELL_WIDTH) + CELL_WIDTH / 2 ;
+  var y = (row * CELL_HEIGHT) + CELL_HEIGHT / 2;
 
   gameElement.position.x = x;
   gameElement.position.y = y;
@@ -62,7 +69,8 @@ function createLevel(layout){
       char = grid[row][col];
 
       if(char !== "."){
-        scene.add(createGameElement(char, row, col));
+				// numRows-1-col: createGameElement considers row 0 to be last line of level string
+        scene.add(createGameElement(char, numRows-1-row, col));
       }
     }
   }
@@ -136,9 +144,9 @@ function createScene() {
 		);
 
 	// Set the position of the camera
-	camera.position.x = 0;
-	camera.position.z = 300;
-	camera.position.y = 0;
+	camera.position.x = DEFAULT_WIDTH / 2;
+	camera.position.z = 1000;
+	camera.position.y = DEFAULT_HEIGHT / 2;
 
 	// Create the renderer
 	renderer = new THREE.WebGLRenderer({
