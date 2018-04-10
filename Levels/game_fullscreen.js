@@ -143,6 +143,10 @@ function createScene() {
 		farPlane
 		);
 
+	// camera = new THREE.OrthographicCamera(
+	// 	0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0, 1, 10000
+	// );
+
 	// Set the position of the camera
 	camera.position.x = DEFAULT_WIDTH / 2;
 	camera.position.z = 1000;
