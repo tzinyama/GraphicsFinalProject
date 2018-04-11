@@ -98,13 +98,29 @@ var hero = {
       }
       //console.log(checkUp);
     }
+    var checkLeft = useMin(checkCol(hBoundingBox[3], dirVectors[3], 0, .25),
+      checkCol(hBoundingBox[0],dirVectors[3], 0, .25));
+    if (checkLeft){
+      if (this.xVel < 0){
+        this.xVel = 0;
+        this.x += .25 - checkLeft;
+      }
+    }
+
+    var checkRight = useMin(checkCol(hBoundingBox[2], dirVectors[1], 0, .25),
+      checkCol(hBoundingBox[1],dirVectors[1], 0, .25));
+    if (checkRight){
+      if (this.xVel > 0){
+        this.xVel = 0;
+        this.x -= .25 - checkRight;
+      }
+    }
 
 
     var checkDown = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, 2),
         checkCol(hBoundingBox[3], dirVectors[2], 0, 2));
 
     if (checkDown) {
-      //console.log("on land");
       land();
       this.y += 2-checkDown;
     }

@@ -126,6 +126,16 @@ function createWorld() {
              platform2.position.y += 3;
     collidableMeshList[1] = platform2;
 
+
+
+    var platform3 = new THREE.Mesh(
+                new THREE.BoxGeometry(1.5,3,1.5),
+                new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+              );
+              platform3.position.x -= 6;
+              platform3.position.y += 1;
+     collidableMeshList[2] = platform3;
+
      testPlat = new THREE.Mesh(
                 new THREE.BoxGeometry(.8,2,.1),
                 new THREE.MeshLambertMaterial( { color: 0xff00ff } )
@@ -137,6 +147,7 @@ function createWorld() {
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
    worldModel.add(platform);   //0 child
    worldModel.add(platform2);
+   worldModel.add(platform3);
    //worldModel.add(testPlat);
 
    hero.model.position.y += hero.hHeight/2;
