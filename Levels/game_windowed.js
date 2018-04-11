@@ -32,6 +32,19 @@ var level1 = `
 ####################
 `;
 
+var level2 = `
+.............oo.....
+...oo......#####....
+.######.............
+..oo................
+.####.....#####...o.
+.................###
+....oo..........o...
+..######.......###..
+...............oo...
+#######....#########
+`;
+
 
 function createGameElement(item, row, col){
 	// row 0 is the last line of the level string
@@ -84,8 +97,12 @@ function createScene() {
   scene = new THREE.Scene();
 
   // camera
-  camera = new THREE.OrthographicCamera(-1200, 1200, 1000, -1000, 1, 3000);
-  camera.position.z = 15;
+  camera = new THREE.OrthographicCamera(-1000, 1000, 500, -500, 1, 1000);
+
+  // TODO: investigate these values further
+  camera.position.z = 100;
+  camera.position.x = WIDTH;
+  camera.position.y = HEIGHT / 2;
 
   // lights
   // dim light shining from above
