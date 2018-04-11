@@ -39,6 +39,11 @@ var animating = false;  // This is set to true when an animation is running.
 
 var collidableMeshList = [];
 
+var dirVectors = [new THREE.Vector3(0,1,0), new THREE.Vector3(1,0,0),
+    new THREE.Vector3(0,-1,0), new THREE.Vector3(-1,0,0)];
+
+var testPlat;
+
 var clock = 0;
 
 var heldKeys = {
@@ -59,7 +64,7 @@ function createScene() {
 
   // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
   camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
-   camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
+  camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
   camera.position.z = 15;
 
   // create some lights and add them to the scene.
@@ -112,9 +117,27 @@ function createWorld() {
           );
    collidableMeshList[0] = platform;
 
+
+   var platform2 = new THREE.Mesh(
+               new THREE.BoxGeometry(5,1,1.5),
+               new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+             );
+             platform2.position.x += 4;
+             platform2.position.y += 3;
+    collidableMeshList[1] = platform2;
+
+     testPlat = new THREE.Mesh(
+                new THREE.BoxGeometry(.8,2,.1),
+                new THREE.MeshLambertMaterial( { color: 0xff00ff } )
+              );
+              testPlat.position.y -=1;
+              testPlat.position.z+=1;
+
+
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
    worldModel.add(platform);   //0 child
-
+   worldModel.add(platform2);
+   //worldModel.add(testPlat);
 
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);

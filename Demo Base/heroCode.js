@@ -61,24 +61,52 @@ var hero = {
       this.jump();
     }
 
+
+
     //Update player position
     this.x+=this.xVel;
     hero.y += hero.yVel;
 
 
     //Gravity is always applied
-    this.yVel -= .02;
+    if(this.yVel > -.8){
+      this.yVel -= .02;
+    }
 
 
+    //console.log(hero.model.position.z);
 
-    var originPoint = new THREE.Vector3(this.x+.25, this.y, 0);
-    var downRay = new THREE.Raycaster(originPoint, new THREE.Vector3(0,-1,0),0, 2);
-    var collisionResults = downRay.intersectObjects( collidableMeshList );
-    if ( collisionResults.length > 0 && this.yVel < 0){
+    //console.log(this.x);
+    //console.log(this.y);
+    var hBoundingBox = [
+        new THREE.Vector3(this.x -.4, this.y, 0),
+        new THREE.Vector3(this.x +.4, this.y + 2, 0),
+        new THREE.Vector3(this.x +.4, this.y, 0),
+        new THREE.Vector3(this.x -.4, this.y, 0)];
+
+
+    var originPoint = new THREE.Vector3(this.x, this.y, 0);
+    //console.log(this.x);
+
+    var checkUp = checkCol(originPoint, dirVectors[0], 0, 2);
+    if (checkUp){
+      //console.log(checkUp);
+      if(this.yVel > 0){
+          this.yVel = 0;
+          //this.y += 2-checkUp;
+
+      }
+      //console.log(checkUp);
+    }
+
+
+    var checkDown = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, 2),
+        checkCol(hBoundingBox[3], dirVectors[2], 0, 2));
+
+    if (checkDown) {
+      //console.log("on land");
       land();
-      this.y += 2-collisionResults[0].distance;
-      //console.log("down collide");
-      //console.log(collisionResults[0].distance);
+      this.y += 2-checkDown;
     }
     else if (this.wasOnGround && !this.jumped){
       this.wasOnGround = false;
@@ -141,6 +169,21 @@ var hero = {
   }
 }
 
+function checkCol(pos, dir, near, far) {
+  var ray = new THREE.Raycaster(pos, dir.normalize(), near, far);
+  var collisionResults = ray.intersectObjects( collidableMeshList );
+  if (collisionResults.length > 0) {
+    return collisionResults[0].distance;
+  }
+}
+
+function useMin(col1, col2){
+  if (col1 && col2) {
+    return Math.min(col1, col2);
+  }
+  return col1 || col2;
+}
+
 function accelRight(n){
   hero.facingRight = true;
   if(hero.xVel < 0 && hero.onGround){
@@ -161,15 +204,6 @@ function accelLeft(n){
     hero.xVel = -1*hero.maxSpeed;}
 }
 
-/*
-function moveY(){
-  hero.y += hero.yVel;
-  hero.yVel -= .02;
-  if(hero.y < 0){
-    hero.y = 0;
-    land();
-  }
-}*/
 
 function land(){
   hero.jumped = false;
