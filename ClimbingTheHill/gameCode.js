@@ -131,9 +131,22 @@ function createWorld() {
 
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
+   initGoose(1.5,3,1.5,6.5);
+   worldModel.add(goose.model);
 
    return worldModel;
 
+}
+
+//Sets a goose at position (x,y), which walks back and forth between xmin and xmax
+function initGoose(x,y,xmin,xmax){
+  var scale = .25;
+  goose.model.scale.set(scale,scale,scale);
+  goose.x = x;
+  goose.y = y;
+  goose.y += scale* 4.2;
+  goose.xmin = xmin;
+  goose.xmax = xmax;
 }
 
 
@@ -153,6 +166,7 @@ function updateForFrame() {
   if (currentModel == WORLD) {
     clock = (clock + 1)%1000000;
     hero.update();
+    goose.update();
   }
 }
 
