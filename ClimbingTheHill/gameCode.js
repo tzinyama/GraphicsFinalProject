@@ -122,18 +122,28 @@ function createWorld() {
               testPlat.position.y -=1;
               testPlat.position.z+=1;
 
+      var deathPlat = new THREE.Mesh(
+                  new THREE.BoxGeometry(2,1,1),
+                  new THREE.MeshLambertMaterial( { color: 0xff0033 } )
+                );
+                deathPlat.position.x += 10;
+                deathPlat.position.y += .5;
+       collidableMeshList[3] = deathPlat;
+
 
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
    worldModel.add(platform);   //0 child
    worldModel.add(platform2);
    worldModel.add(platform3);
+   worldModel.add(deathPlat);
    //worldModel.add(testPlat);
 
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
    initGoose(1.5,3,1.5,6.5);
    worldModel.add(goose.model);
-
+   var tempBox = new THREE.Box3().setFromObject(goose.model);
+   //collidableMeshList[4] = goose.model;
    return worldModel;
 
 }
@@ -147,6 +157,7 @@ function initGoose(x,y,xmin,xmax){
   goose.y += scale* 4.2;
   goose.xmin = xmin;
   goose.xmax = xmax;
+
 }
 
 

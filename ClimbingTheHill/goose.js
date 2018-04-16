@@ -12,7 +12,7 @@ var goose = {
   model:createGooseModel(),
   onCollide: function(){
     hero.die();
-  }
+  },
   update: function(){
 
     this.animate();
