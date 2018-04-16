@@ -8,40 +8,41 @@ var animating = true;
 //--------------------------- level editing -----------------------------------
 
 var WIDTH = 1000;
-var HEIGHT = 1000;
+var HEIGHT = 500;
 
-var NUM_GRID_ROWS = 20;
-var NUM_GRID_COLS = 10;
+var NUM_GRID_ROWS = 10;
+var NUM_GRID_COLS = 20;
 
 var CELL_WIDTH = WIDTH / NUM_GRID_COLS;
-var CELL_HEIGHT = HEIGHT / NUM_GRID_COLS;
+var CELL_HEIGHT = HEIGHT / NUM_GRID_ROWS;
 
 var PLATFORM = "#";
+var WALL = '|';
 var COIN = "o";
 
 var level1 = `
-....................
+................|...
 ....####....#####...
 ....................
-..oo.......ooo......
+..oo.......ooo.|....
 .####.....######..##
 ....................
 ...oo...........o...
 ..######.......###..
-............oo......
-####################
+.........|..oo..|.o.
+###########....#####
 `;
 
 var level2 = `
 .............oo.....
 ...oo......#####....
 .######.............
-..oo................
-.####.....#####...o.
-.................###
+..oo......|.........
+.####.....#####.|.o.
+................####
 ....oo..........o...
-..######.......###..
-...............oo...
+..######.....|.####.
+....o.|......|.oo.|.
 #######....#########
 `;
 
@@ -50,11 +51,11 @@ var level3 = `
 .##........#####....
 .....##.............
 ..oo....####........
-.####........##...o.
-.................###
+.####........##.|.o.
+........##......####
 ....oo..............
 ..######..##...##...
-..ooo...........oo..
+..ooo.|........|.o..
 #######....##..#####
 `;
 
@@ -67,19 +68,19 @@ var level4 = `
 ................####
 .........oo.........
 ......##....##......
-...##...........##..
-##............##....
+...##...|..|....##..
+##......|..|..##....
 `;
 
 var level5 = `
 ....oo..........o...
 ..######.......###..
-...............oo...
+....|..........|oo..
 #######....#########
 .............oo.....
 ...oo......#####....
-.######.............
-..oo................
+.######.....|......#
+..oo........|.......
 .####.....#####...o.
 .................###
 `;
@@ -91,7 +92,11 @@ function createGameElement(item, row, col){
 
   if(item === PLATFORM){
 		material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
-    geometry = new THREE.BoxGeometry(CELL_WIDTH,CELL_HEIGHT/2,0);
+    geometry = new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT/2, 0);
+  }
+  else if(item === WALL){
+    material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
+    geometry = new THREE.BoxGeometry(CELL_WIDTH/2 + CELL_WIDTH/4, CELL_HEIGHT + CELL_HEIGHT/2, 0);
   }
   else if(item === COIN){
 		material = new THREE.MeshLambertMaterial( { color: 0xFFFF00 } );
@@ -168,12 +173,12 @@ function createScene() {
   scene = new THREE.Scene();
 
   // camera
-  camera = new THREE.OrthographicCamera(-1000, 1000, 500, -500, 1, 1000);
+  camera = new THREE.OrthographicCamera(-500, 500, 250, -250, 1, 1000);
 
   // TODO: investigate these values further
-  camera.position.z = 100;
-  camera.position.x = WIDTH;
-  camera.position.y = HEIGHT / 2;
+  camera.position.z = 50;
+  camera.position.x = WIDTH / 2;
+  camera.position.y = HEIGHT/ 2;
 }
 
 function createLights(){
@@ -229,7 +234,7 @@ function init() {
   createLights();
   createGUI();
   createLevel(level1);
-  
+
   render();
   doFrame();
 }
