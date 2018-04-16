@@ -45,6 +45,44 @@ var level2 = `
 #######....#########
 `;
 
+var level3 = `
+.............oo.....
+.##........#####....
+.....##.............
+..oo....####........
+.####........##...o.
+.................###
+....oo..............
+..######..##...##...
+..ooo...........oo..
+#######....##..#####
+`;
+
+var level4 = `
+.............oo.....
+...oo......#####....
+.######.............
+..oo................
+.####.....####...oo.
+................####
+.........oo.........
+......##....##......
+...##...........##..
+##............##....
+`;
+
+var level5 = `
+....oo..........o...
+..######.......###..
+...............oo...
+#######....#########
+.............oo.....
+...oo......#####....
+.######.............
+..oo................
+.####.....#####...o.
+.................###
+`;
 
 function createGameElement(item, row, col){
 	// row 0 is the last line of the level string
@@ -89,6 +127,39 @@ function createLevel(layout){
   }
 }
 
+function resetLevel(level){
+  alert("Switching Levels");
+  createScene();
+  scene.add(camera);
+
+  createLights();
+  createLevel(level);
+  render();
+}
+
+function createGUI(){
+  var gui = new dat.GUI();
+
+  var parameters =
+  {
+    a: function() { resetLevel(level1) },
+    b: function() { resetLevel(level2) },
+    c: function() { resetLevel(level3) },
+    d: function() { resetLevel(level4) },
+    e: function() { resetLevel(level5) }
+
+  };
+  // gui.add( parameters )
+  gui.add( parameters, 'a' ).name('Level 1');
+  gui.add( parameters, 'b' ).name('Level 2');
+  gui.add( parameters, 'c' ).name('Level 3');
+  gui.add( parameters, 'd' ).name('Level 4');
+  gui.add( parameters, 'e' ).name('Level 5');
+
+  gui.open();
+
+}
+
 //--------------------------- scene creation -----------------------------------
 
 function createScene() {
@@ -103,8 +174,9 @@ function createScene() {
   camera.position.z = 100;
   camera.position.x = WIDTH;
   camera.position.y = HEIGHT / 2;
+}
 
-  // lights
+function createLights(){
   // dim light shining from above
   scene.add( new THREE.DirectionalLight( 0xffffff, 0.4 ) );
   // a light to shine in the direction the camera faces
@@ -154,7 +226,10 @@ function init() {
   }
 
   createScene();
+  createLights();
+  createGUI();
   createLevel(level1);
+  
   render();
   doFrame();
 }
