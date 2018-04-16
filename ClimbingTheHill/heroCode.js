@@ -17,8 +17,10 @@ var hero = {
   jumpHold: 10,
   jumpHoldMax: 10,
   jumped: false,
+  canJump: true,
   canDoubleJump: false,
   haveDoubleJumped: false,
+  resetDoubleJump: false,
   facingRight: true,
   animTicker: 0,
   walking: false,
@@ -27,7 +29,7 @@ var hero = {
 
 
 
-    //Screen loop
+    //Screen wrapping
     if(this.x >12) this.x = -12;
     if(this.x <-12) this.x = 12;
     if(this.y <-12) this.y = 12;
@@ -36,12 +38,13 @@ var hero = {
     if(this.facingRight) this.model.rotation.set(0,.7,0);
     else this.model.rotation.set(0,-.7,0);
 
-
+    //dampen movement when not holding move keys (on ground)
     if(this.xVel!=0 && ((!heldKeys.right && !heldKeys.left) || (heldKeys.right && heldKeys.left)) && this.onGround){
       this.xVel = this.xVel*.5;
       this.walking = false;
     }
 
+    //dampen movement when not holding move keys (in air)
     if(this.xVel!=0 && ((!heldKeys.right && !heldKeys.left) || (heldKeys.right && heldKeys.left)) && !this.onGround){
       this.xVel = this.xVel*.9;
       this.walking = false;
@@ -57,11 +60,9 @@ var hero = {
       this.walking = true;
     }
     //Jumping
-    if(heldKeys.up || heldKeys.space){
+    if((heldKeys.up || heldKeys.space)){
       this.jump();
     }
-
-
 
     //Update player position
     this.x+=this.xVel;
@@ -74,10 +75,6 @@ var hero = {
     }
 
 
-    //console.log(hero.model.position.z);
-
-    //console.log(this.x);
-    //console.log(this.y);
     var hBoundingBox = [
         new THREE.Vector3(this.x -.4, this.y, 0),
         new THREE.Vector3(this.x +.4, this.y + 2, 0),
@@ -86,17 +83,31 @@ var hero = {
 
 
     var originPoint = new THREE.Vector3(this.x, this.y, 0);
-    //console.log(this.x);
 
     var checkUp = checkCol(originPoint, dirVectors[0], 0, 2);
     if (checkUp){
-      //console.log(checkUp);
       if(this.yVel > 0){
           this.yVel = 0;
           //this.y += 2-checkUp;
 
       }
-      //console.log(checkUp);
+    }
+    var checkLeft = useMin(checkCol(hBoundingBox[3], dirVectors[3], 0, .25),
+      checkCol(hBoundingBox[0],dirVectors[3], 0, .25));
+    if (checkLeft){
+      if (this.xVel < 0){
+        this.xVel = 0;
+        this.x += .25 - checkLeft;
+      }
+    }
+
+    var checkRight = useMin(checkCol(hBoundingBox[2], dirVectors[1], 0, .25),
+      checkCol(hBoundingBox[1],dirVectors[1], 0, .25));
+    if (checkRight){
+      if (this.xVel > 0){
+        this.xVel = 0;
+        this.x -= .25 - checkRight;
+      }
     }
 
 
@@ -104,15 +115,20 @@ var hero = {
         checkCol(hBoundingBox[3], dirVectors[2], 0, 2));
 
     if (checkDown) {
-      //console.log("on land");
       land();
       this.y += 2-checkDown;
     }
+
     else if (this.wasOnGround && !this.jumped){
       this.wasOnGround = false;
-      this.canDoubleJump = true;
+      this.resetDoubleJump = true;
       this.onGround = false;
       this.jumpHold = 0;
+    }
+
+    if((!heldKeys.up && this.resetDoubleJump)){ //In case hero runs off platform
+      this.canDoubleJump = true;                //while holding jump, don't
+      this.resetDoubleJump = false;             //activate double jump instantly
     }
 
     //Actually update model position
@@ -122,24 +138,30 @@ var hero = {
 
   },
 
-  jump: function(){
-    if(this.onGround){
+  jump: function(){  //jump, or handle mid-air jump key functions
+    if(this.onGround && this.canJump){ //jumping from on a platform
       this.jumped = true;
       this.yVel += .2;
       this.onGround = false;
-    } else if( this.jumpHold > 0 ){
+      this.canJump = false;
+    }else if(this.onGround && ! this.canJump){
+      return; //if jump was held since before landing, do nothing
+    }else if( this.jumpHold > 0 ){ //Increase jump height if held longer
       this.jumpHold--;
       this.yVel += this.jumpSpeed;
-    } else if (this.canDoubleJump && !this.haveDoubleJumped){
+    } else if (this.canDoubleJump && !this.haveDoubleJumped){ //double jump
       this.yVel = .15;
       this.canDoubleJump = false;
       this.haveDoubleJumped = true;
       this.jumpHold = this.jumpHoldMax/2;
+      this.canJump = false;
     }
   },
 
   animate: function(){        //Move parts of hero model
     this.animTicker = (this.animTicker+this.xVel) % 1000000;
+
+    //Blinking
     if(clock % 300 < 8){
       this.model.head.eyes.scale.set(1,0.2,1);
       this.model.head.eyes.position.y = -.5;
@@ -147,6 +169,8 @@ var hero = {
       this.model.head.eyes.scale.set(1,1,1);
       this.model.head.eyes.position.y = 0;
     }
+
+    //walk cycle
     if(this.walking){
       this.model.rightArm.rotation.x = Math.sin(2.5*this.animTicker)/2;
       this.model.leftArm.rotation.x = -1* Math.sin(2.5*this.animTicker)/2;
@@ -157,6 +181,7 @@ var hero = {
         this.model.head.rotation.x -= (this.model.head.rotation.x)/20;
       }
 
+    //default
     } else {
       this.model.rightArm.rotation.x = 0;
       this.model.leftArm.rotation.x = 0;
@@ -184,6 +209,7 @@ function useMin(col1, col2){
   return col1 || col2;
 }
 
+//accelerate hero right by n velocity
 function accelRight(n){
   hero.facingRight = true;
   if(hero.xVel < 0 && hero.onGround){
@@ -194,6 +220,7 @@ function accelRight(n){
     hero.xVel = hero.maxSpeed;}
 }
 
+//accelerate hero left by n velocity
 function accelLeft(n){
   hero.facingRight = false;
   if(hero.xVel > 0 && hero.onGround){
@@ -204,7 +231,7 @@ function accelLeft(n){
     hero.xVel = -1*hero.maxSpeed;}
 }
 
-
+//Called when hero touches ground
 function land(){
   hero.jumped = false;
   hero.onGround = true;
@@ -215,8 +242,10 @@ function land(){
   hero.haveDoubleJumped = false;
 }
 
+//called when jump key is released
 function jumpRelease(){
   hero.jumpHold = 0;
+  hero.canJump = true;
   if(!hero.canDoubleJump){
     hero.canDoubleJump = true;
   }
