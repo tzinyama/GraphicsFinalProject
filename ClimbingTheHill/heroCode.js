@@ -192,6 +192,14 @@ var hero = {
       }
     }
   }
+  die: function(){
+    console.log("died");
+    this.x = 0;
+    this.y = 0;
+    this.xVel = 0;
+    this.yVel = 0;
+    land();
+  }
 }
 
 function checkCol(pos, dir, near, far) {

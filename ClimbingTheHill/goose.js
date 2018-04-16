@@ -7,11 +7,14 @@ var goose = {
   y:0,
   xmin:0,
   xmax:10,
-  speed:.03,
+  speed:.04,
   goingRight: true,
   model:createGooseModel(),
+  onCollide: function(){
+    hero.die();
+  }
   update: function(){
-    
+
     this.animate();
 
     if(this.goingRight){
