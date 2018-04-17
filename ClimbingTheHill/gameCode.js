@@ -142,7 +142,7 @@ function createWorld() {
 
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
-   initGoose(1.5,3,1.5,6.5);
+   initGoose(1.5,3,1.5,6.5,false);
    worldModel.add(goose.model);
    worldModel.add(stonePlatform.model);
    collidableMeshList[4] = stonePlatform.model.base;
@@ -153,8 +153,12 @@ function createWorld() {
 }
 
 //Sets a goose at position (x,y), which walks back and forth between xmin and xmax
-function initGoose(x,y,xmin,xmax){
+function initGoose(x,y,xmin,xmax,flying){
   var scale = .25;
+  if(flying){
+    goose.flyingModel();
+    goose.flying = true;
+  }
   goose.model.scale.set(scale,scale,scale);
   goose.x = x;
   goose.y = y;

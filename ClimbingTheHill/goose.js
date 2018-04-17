@@ -9,6 +9,7 @@ var goose = {
   xmax:10,
   speed:.04,
   goingRight: true,
+  flying: false,
   model:createGooseModel(),
   onCollide: function(){
     hero.die();
@@ -40,10 +41,36 @@ var goose = {
     } else {
       this.model.rotation.y = -.7;
     }
-    this.model.rightLeg.rotation.x = Math.sin(.1*clock)/2;
-    this.model.leftLeg.rotation.x = -Math.sin(.1*clock)/2;
+    if(!this.flying){
+      this.model.rightLeg.rotation.x = Math.sin(.1*clock)/2;
+      this.model.leftLeg.rotation.x = -Math.sin(.1*clock)/2;
+    }else{
+      this.model.rightWing.rotation.z = Math.sin(.05*clock)/3;
+      this.model.leftWing.rotation.z = -Math.sin(.05*clock)/3;
+    }
     this.model.head.rotation.x = Math.sin(.05*clock)/5;
     this.model.head.top.rotation.x = -Math.sin(.05*clock)/5;
+  },
+  flyingModel: function(){
+    var brown = new THREE.MeshPhongMaterial(
+                      {color:0x855E39, shading:THREE.FlatShading});
+    var geomWing = new THREE.BoxGeometry(3,.5,2);
+    var wing = new THREE.Mesh(geomWing, brown);
+    wing.position.x = 1.5;
+    wing.position.y = .5;
+    var leftWing = new THREE.Object3D();
+    leftWing.add(wing.clone());
+    this.model.leftWing = leftWing;
+    this.model.add(this.model.leftWing);
+
+    wing.position.x = -1.5
+    var rightWing = new THREE.Object3D();
+    rightWing.add(wing);
+    this.model.rightWing = rightWing;
+    this.model.add(this.model.rightWing);
+
+    this.model.rightLeg.rotation.x = -2;
+    this.model.leftLeg.rotation.x = -2;
   }
 }
 
