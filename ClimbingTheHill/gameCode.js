@@ -51,7 +51,7 @@ var heldKeys = {
  */
 function createScene() {
   // Set background color.
-  renderer.setClearColor( 0xBBBBBB );
+  renderer.setClearColor( 0xACF3FC );
   scene = new THREE.Scene();
 
   // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
@@ -142,6 +142,8 @@ function createWorld() {
    worldModel.add(hero.model);
    initGoose(1.5,3,1.5,6.5);
    worldModel.add(goose.model);
+   worldModel.add(stonePlatform.model);
+   collidableMeshList[4] = stonePlatform.model.base;
    var tempBox = new THREE.Box3().setFromObject(goose.model);
    //collidableMeshList[4] = goose.model;
    return worldModel;
