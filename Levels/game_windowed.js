@@ -16,16 +16,25 @@ var NUM_GRID_COLS = 20;
 var CELL_WIDTH = WIDTH / NUM_GRID_COLS;
 var CELL_HEIGHT = HEIGHT / NUM_GRID_ROWS;
 
+var NOTHING = '.';
 var PLATFORM = "#";
 var WALL = '|';
 var COIN = "o";
 
+// always define a live platform as <->; Live platforms have standardized length
+var LIVE_PLATFORM = "-";
+var LIVE_PLATFORM_START = '<';
+var LIVE_PLATFORM_END = '>';
+
+var liveElements = [];
+var staticElements = [];
+
 var level1 = `
 ................|...
-....####....#####...
+.........<->..#####.
 ....................
-..oo.......ooo.|....
-.####.....######..##
+.oo...........o.|.o.
+.##..<->......######
 ....................
 ...oo...........o...
 ..######.......###..
@@ -38,36 +47,36 @@ var level2 = `
 ...oo......#####....
 .######.............
 ..oo......|.........
-.####.....#####.|.o.
+....<->...#####.|.o.
 ................####
 ....oo..........o...
 ..######.....|.####.
-....o.|......|.oo.|.
-#######....#########
+.o.|.oo......|.oo.|.
+####....<->..#######
 `;
 
 var level3 = `
 .............oo.....
 .##........#####....
-.....##.............
+.....<->............
 ..oo....####........
 .####........##.|.o.
-........##......####
+.......<->......####
 ....oo..............
-..######..##...##...
+..######...<->......
 ..ooo.|........|.o..
 #######....##..#####
 `;
 
 var level4 = `
 .............oo.....
-...oo......#####....
-.######.............
+....o......#####....
+...<->..............
 ..oo................
 .####.....####...oo.
 ................####
 .........oo.........
-......##....##......
+......<->...........
 ...##...|..|....##..
 ##......|..|..##....
 `;
@@ -94,6 +103,11 @@ function createGameElement(item, row, col){
 		material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
     geometry = new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT/2, 0);
   }
+  else if(item === LIVE_PLATFORM){
+    // all live platforms have a standardized length of three cells
+    material = new THREE.MeshLambertMaterial( { color: 0xAA0000 } );
+    geometry = new THREE.BoxGeometry(CELL_WIDTH * 3, CELL_HEIGHT/2, 0);
+  }
   else if(item === WALL){
     material = new THREE.MeshLambertMaterial( { color: 0x00CC55 } );
     geometry = new THREE.BoxGeometry(CELL_WIDTH/2 + CELL_WIDTH/4, CELL_HEIGHT + CELL_HEIGHT/2, 0);
@@ -111,6 +125,8 @@ function createGameElement(item, row, col){
   gameElement.position.x = x;
   gameElement.position.y = y;
 
+  // gameElement.rotation.set(3,0,0);
+  // gameElement.position.y -= 2;
   return gameElement;
 }
 
@@ -124,16 +140,15 @@ function createLevel(layout){
     for(var col = 0; col < numCols; col++){
       char = grid[row][col];
 
-      if(char !== "."){
+      if(!(char === NOTHING || char == LIVE_PLATFORM_START || char === LIVE_PLATFORM_END)){
 				// numRows-1-col: createGameElement considers row 0 to be last line of level string
-        scene.add(createGameElement(char, numRows-1-row, col));
+        scene.add(createGameElement(char, numRows-1-row, col)); //1 = one cell
       }
     }
   }
 }
 
 function resetLevel(level){
-  alert("Switching Levels");
   createScene();
   scene.add(camera);
 
@@ -173,10 +188,10 @@ function createScene() {
   scene = new THREE.Scene();
 
   // camera
-  camera = new THREE.OrthographicCamera(-500, 500, 250, -250, 1, 1000);
+  camera = new THREE.OrthographicCamera(-500, 500, 250, -250, 1, 30);
 
   // TODO: investigate these values further
-  camera.position.z = 50;
+  camera.position.z = 15;
   camera.position.x = WIDTH / 2;
   camera.position.y = HEIGHT/ 2;
 }
