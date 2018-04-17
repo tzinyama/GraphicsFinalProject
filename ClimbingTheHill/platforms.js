@@ -61,7 +61,7 @@ function createStonePlatform(){
 
 
   console.log(model);
-  model.position.y = 1;
+  model.position.y = 5;
   model.position.x = -8;
   model.scale.set(.3,.3,.3);
   return model;

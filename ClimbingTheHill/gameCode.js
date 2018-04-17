@@ -58,6 +58,8 @@ function createScene() {
   // camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
   camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
   camera.position.z = 15;
+  camera.position.y = 4;
+  camera.lookAt(new THREE.Vector3(0,0,0));
 
   // create some lights and add them to the scene.
 
@@ -80,7 +82,7 @@ function createScene() {
 
   var world = createWorld();
   models[WORLD] = world;
-  models[currentModel].rotation.set(0.2,0,0);
+  models[currentModel].rotation.set(0,0,0);
   models[currentModel].position.y -= 2
   scene.add(models[WORLD]);
 }
@@ -128,7 +130,7 @@ function createWorld() {
                 );
                 deathPlat.position.x += 10;
                 deathPlat.position.y += .5;
-       collidableMeshList[3] = deathPlat;
+       collidableMeshList[3] = goose.model.torso.tail;
 
 
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
