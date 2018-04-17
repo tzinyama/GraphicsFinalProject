@@ -51,13 +51,15 @@ var heldKeys = {
  */
 function createScene() {
   // Set background color.
-  renderer.setClearColor( 0xBBBBBB );
+  renderer.setClearColor( 0xACF3FC );
   scene = new THREE.Scene();
 
   // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
   // camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
   camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
   camera.position.z = 15;
+  camera.position.y = 4;
+  camera.lookAt(new THREE.Vector3(0,0,0));
 
   // create some lights and add them to the scene.
 
@@ -80,7 +82,7 @@ function createScene() {
 
   var world = createWorld();
   models[WORLD] = world;
-  models[currentModel].rotation.set(0.2,0,0);
+  models[currentModel].rotation.set(0,0,0);
   models[currentModel].position.y -= 2
   scene.add(models[WORLD]);
 }
@@ -128,7 +130,7 @@ function createWorld() {
                 );
                 deathPlat.position.x += 10;
                 deathPlat.position.y += .5;
-       collidableMeshList[3] = deathPlat;
+       collidableMeshList[3] = goose.model.torso.tail;
 
 
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
@@ -140,8 +142,10 @@ function createWorld() {
 
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
-   initGoose(1.5,3,1.5,6.5);
+   initGoose(1.5,3,1.5,6.5,false);
    worldModel.add(goose.model);
+   worldModel.add(stonePlatform.model);
+   collidableMeshList[4] = stonePlatform.model.base;
    var tempBox = new THREE.Box3().setFromObject(goose.model);
    //collidableMeshList[4] = goose.model;
    return worldModel;
@@ -149,8 +153,12 @@ function createWorld() {
 }
 
 //Sets a goose at position (x,y), which walks back and forth between xmin and xmax
-function initGoose(x,y,xmin,xmax){
+function initGoose(x,y,xmin,xmax,flying){
   var scale = .25;
+  if(flying){
+    goose.flyingModel();
+    goose.flying = true;
+  }
   goose.model.scale.set(scale,scale,scale);
   goose.x = x;
   goose.y = y;
