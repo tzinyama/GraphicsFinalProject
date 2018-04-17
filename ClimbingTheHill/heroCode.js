@@ -73,10 +73,10 @@ var hero = {
     if(this.yVel > -.8){
       this.yVel -= .02;
     }
-
+    //console.log(goose.model);
 
     var hBoundingBox = [
-        new THREE.Vector3(this.x -.4, this.y, 0),
+        new THREE.Vector3(this.x -.4, this.y + 2, 0),
         new THREE.Vector3(this.x +.4, this.y + 2, 0),
         new THREE.Vector3(this.x +.4, this.y, 0),
         new THREE.Vector3(this.x -.4, this.y, 0)];
@@ -115,8 +115,11 @@ var hero = {
         checkCol(hBoundingBox[3], dirVectors[2], 0, 2));
 
     if (checkDown) {
-      land();
-      this.y += 2-checkDown;
+      if (this.yVel < 0){
+        land();
+        this.y += 2-checkDown;
+      }
+
     }
 
     else if (this.wasOnGround && !this.jumped){
@@ -191,6 +194,13 @@ var hero = {
         this.model.head.rotation.x += (this.model.head.rotation.x -.25)/20;
       }
     }
+  },
+
+  die: function(){
+    this.x = 0;
+    this.y = 0;
+    this.xVel = 0;
+    this.yVel = 0;
   }
 }
 
@@ -198,6 +208,18 @@ function checkCol(pos, dir, near, far) {
   var ray = new THREE.Raycaster(pos, dir.normalize(), near, far);
   var collisionResults = ray.intersectObjects( collidableMeshList );
   if (collisionResults.length > 0) {
+    //console.log(goose.model);
+    //console.log(collisionResults[0].object);
+    //console.log(collidableMeshList[3]);
+    //console.log(goose.model);
+    //console.log(collisionResults[0].object.parent);
+    if(collisionResults[0].object == collidableMeshList[3]){
+      hero.die();
+      console.log("GOOSE!");
+    }
+    //if(collisionResults[0].object.onCollide()){
+      //collisionResults[0].object.onCollide()
+    //}
     return collisionResults[0].distance;
   }
 }
