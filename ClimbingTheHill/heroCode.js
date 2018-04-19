@@ -75,20 +75,33 @@ var hero = {
     }
     //console.log(goose.model);
 
+    var offsetY = 1.9;
+
     var hBoundingBox = [
-        new THREE.Vector3(this.x -.4, this.y + 2, 0),
-        new THREE.Vector3(this.x +.4, this.y + 2, 0),
-        new THREE.Vector3(this.x +.4, this.y, 0),
-        new THREE.Vector3(this.x -.4, this.y, 0)];
+        new THREE.Vector3(this.x -.4, this.y + 1 - offsetY, 0),
+        new THREE.Vector3(this.x +.4, this.y + 1 - offsetY, 0),
+        new THREE.Vector3(this.x +.4, this.y - offsetY, 0),
+        new THREE.Vector3(this.x -.4, this.y - offsetY, 0)];
 
 
     var originPoint = new THREE.Vector3(this.x, this.y, 0);
 
-    var checkUp = checkCol(originPoint, dirVectors[0], 0, 2);
+    //For testing raycasts
+    //var arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[0], 1, 0xff00ff);
+    //scene.add(arrow);
+    //arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[1], 1, 0xff0000);
+    //scene.add(arrow);
+    //arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[2], 1, 0x0000ff);
+    //scene.add(arrow);
+    //arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[3], 1, 0xff8800);
+    //scene.add(arrow);
+
+    var checkUp = useMin(checkCol(hBoundingBox[0], dirVectors[0], 0, .25),
+    checkCol(hBoundingBox[1], dirVectors[0], 0, .25));
     if (checkUp){
       if(this.yVel > 0){
           this.yVel = 0;
-          //this.y += 2-checkUp;
+          //this.y += .25-checkUp;
 
       }
     }
@@ -111,13 +124,13 @@ var hero = {
     }
 
 
-    var checkDown = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, 2),
-        checkCol(hBoundingBox[3], dirVectors[2], 0, 2));
+    var checkDown = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .50),
+        checkCol(hBoundingBox[3], dirVectors[2], 0, .50));
 
     if (checkDown) {
       if (this.yVel < 0){
         land();
-        this.y += 2-checkDown;
+        this.y += .1-checkDown;
       }
 
     }

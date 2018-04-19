@@ -137,7 +137,7 @@ function createWorld() {
    worldModel.add(platform);   //0 child
    worldModel.add(platform2);
    worldModel.add(platform3);
-   worldModel.add(deathPlat);
+   //worldModel.add(deathPlat);
    //worldModel.add(testPlat);
 
    hero.model.position.y += hero.hHeight/2;
