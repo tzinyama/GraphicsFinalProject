@@ -144,8 +144,8 @@ function createWorld() {
    worldModel.add(hero.model);
    initGoose(1.5,3,1.5,6.5,false);
    worldModel.add(goose.model);
-   worldModel.add(stonePlatform.model);
-   collidableMeshList[4] = stonePlatform.model.base;
+   worldModel.add(snowPlatform.model);
+   collidableMeshList[4] = snowPlatform.model.base;
    var tempBox = new THREE.Box3().setFromObject(goose.model);
    //collidableMeshList[4] = goose.model;
    return worldModel;
