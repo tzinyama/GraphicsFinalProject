@@ -110,7 +110,7 @@ var hero = {
     if (checkLeft){
       if (this.xVel < 0){
         this.xVel = 0;
-        this.x += .25 - checkLeft;
+        this.x += .1 - checkLeft;
       }
     }
 
@@ -119,7 +119,7 @@ var hero = {
     if (checkRight){
       if (this.xVel > 0){
         this.xVel = 0;
-        this.x -= .25 - checkRight;
+        this.x -= .1 - checkRight;
       }
     }
 
