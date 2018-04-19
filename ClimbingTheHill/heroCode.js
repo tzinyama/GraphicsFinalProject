@@ -124,15 +124,24 @@ var hero = {
     }
 
 
-    var checkDown = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .50),
-        checkCol(hBoundingBox[3], dirVectors[2], 0, .50));
-
-    if (checkDown) {
+    var checkDown1 = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .25),
+        checkCol(hBoundingBox[3], dirVectors[2], 0, .25));
+    if (!checkDown1){
+    var checkDown2 = useMin(checkCol(hBoundingBox[0], dirVectors[2], 0, 1.25),
+        checkCol(hBoundingBox[1], dirVectors[2], 0, 1.25));
+    }
+    if (checkDown1) {
       if (this.yVel < 0){
         land();
-        this.y += .1-checkDown;
+        this.y += .1-checkDown1;
       }
 
+    }
+    else if (checkDown2){
+      if (this.yVel < 0){
+        land();
+        this.y += 1.25-checkDown2;
+      }
     }
 
     else if (this.wasOnGround && !this.jumped){
