@@ -32,7 +32,9 @@ var hero = {
     //Screen wrapping
     if(this.x >12) this.x = -12;
     if(this.x <-12) this.x = 12;
-    if(this.y <-12) this.y = 12;
+    // if(this.y <-12) this.y = 12;
+
+    if(this.y < -12) hero.die();
 
     //Model rotation
     if(this.facingRight) this.model.rotation.set(0,.7,0);
@@ -238,7 +240,11 @@ function checkCol(pos, dir, near, far) {
     if(collisionResults[0].object == collidableMeshList[3]){
       hero.die();
       console.log("GOOSE!");
+    }else if(collisionResults[0].object == collidableMeshList[4]){
+      snowPlatform.onCollide();
+      // console.log("SNOW!");
     }
+
     //if(collisionResults[0].object.onCollide()){
       //collisionResults[0].object.onCollide()
     //}

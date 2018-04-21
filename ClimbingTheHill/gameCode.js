@@ -130,7 +130,7 @@ function createWorld() {
                 );
                 deathPlat.position.x += 10;
                 deathPlat.position.y += .5;
-       collidableMeshList[3] = goose.model.torso.tail;
+       collidableMeshList[3] = goose.model.torso.base;
 
 
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
@@ -144,8 +144,17 @@ function createWorld() {
    worldModel.add(hero.model);
    initGoose(1.5,3,1.5,6.5,false);
    worldModel.add(goose.model);
+   snowPlatform.init(3,-9,5);
    worldModel.add(snowPlatform.model);
    collidableMeshList[4] = snowPlatform.model.base;
+
+   stonePlatform.init(-1,8);
+   worldModel.add(stonePlatform.model);
+   collidableMeshList.push(stonePlatform.model.base);
+
+   token.init(-1,9);
+   worldModel.add(token.model);
+
    var tempBox = new THREE.Box3().setFromObject(goose.model);
    //collidableMeshList[4] = goose.model;
    return worldModel;
@@ -186,6 +195,8 @@ function updateForFrame() {
     clock = (clock + 1)%1000000;
     hero.update();
     goose.update();
+    snowPlatform.update();
+    token.update();
   }
 }
 

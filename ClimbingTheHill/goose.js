@@ -88,7 +88,9 @@ function createGooseModel(){
 
   var geomTorso = new THREE.BoxGeometry(2,2,3);
   model.torso = new THREE.Object3D();
-  model.torso.add(new THREE.Mesh(geomTorso, white));
+  var base = new THREE.Mesh(geomTorso, white);
+  model.torso.base = base;
+  model.torso.add(model.torso.base);
 
   var geomTail = new THREE.BoxGeometry(2.1,1.1,3);
   model.torso.tail = new THREE.Mesh(geomTail, brown);

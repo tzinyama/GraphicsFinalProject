@@ -19,25 +19,25 @@ var LIVE_PLATFORM_END = '>';
 
 //------------------------------Functions to create ----------------------------//
 
-function createStonePlatform(){
+function createStonePlatform(x,y,snowy){
   var model = new THREE.Object3D();
 
-  var geomBase = new THREE.BoxGeometry(4,4.3,4);
+  var geomBase = new THREE.BoxGeometry(4,4,4);
   var matBase = new THREE.MeshPhongMaterial(
-                          {color:0x888888, shading:THREE.FlatShading });
+                          {color:0x888888, shading:THREE.FlatShading});
   model.base = new THREE.Mesh(geomBase,matBase);
   model.add(model.base);
 
   var matStone1 = new THREE.MeshPhongMaterial(
-                          {color:0x506065, shading:THREE.FlatShading });
-  var matStone2 = new THREE.MeshPhongMaterial(
-                          {color:0x888888, shading:THREE.FlatShading });
+                          {color:0x506065, shading:THREE.FlatShading});
+  var matSnow = new THREE.MeshPhongMaterial(
+                          {color:0xCCCCCC, shading:THREE.FlatShading});
 
-  var geomBrick1 = new THREE.BoxGeometry(2,1.2,1.5);
+  var geomBrick1 = new THREE.BoxGeometry(2,1,1.5);
   var brick1 = new THREE.Mesh(geomBrick1, matStone1);
   brick1.position.z = 1.5;
   brick1.position.x = -.75;
-  brick1.position.y = 1.5;
+  brick1.position.y = 1.4;
   model.add(brick1.clone());
   brick1.scale.set(.5,1,1);
   brick1.position.x += 2;
@@ -56,27 +56,23 @@ function createStonePlatform(){
   brick1.scale.set(.3,.75,1);
   brick1.position.x += 2;
   model.add(brick1.clone());
-  brick1.scale.set(1.3,1,1);
-  brick1.position.y = 1.5;
-  brick1.position.z = -.5;
-  brick1.position.x -= .85;
-  model.add(brick1.clone());
-  brick1.scale.set(.5,1,1);
-  brick1.position.x -= 2;
-  model.add(brick1.clone());
+  if(snowy){
+    var geomSnow = new THREE.BoxGeometry(4.5,.5,4.7);
+    var snow = new THREE.Mesh(geomSnow, matSnow);
+    snow.position.y = 1.76;
+    model.snow = snow;
+    model.add(model.snow);
+  }
 
-
-  model.position.y = 5;
-  model.position.x = -8;
-
-
+  model.position.x = x;
+  model.position.y = y;
   model.scale.set(10,10,10);
   return model;
 }
 
 //------------------------------Pre-made game objects ----------------------------//
 
-var platform = createStonePlatform();
+var platform = createStonePlatform(5,-8,true);
 // var platform = new THREE.Mesh(
 //   new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT/2, 0),
 //   new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
