@@ -15,13 +15,13 @@ function createHeroModel(){
   var model = new THREE.Object3D();
 
   var maroon = new THREE.MeshPhongMaterial(
-                          {color:0x862633, shading:THREE.FlatShading});
+                          {color:0x862633});
   var grey = new THREE.MeshPhongMaterial(
-                          {color:0x58595b, shading:THREE.FlatShading});
+                          {color:0x58595b});
   var white = new THREE.MeshPhongMaterial(
-                          {color:0xffffff, shading:THREE.FlatShading});
+                          {color:0xffffff});
   var denim = new THREE.MeshPhongMaterial(
-                          {color:0x365777, shading:THREE.FlatShading});
+                          {color:0x365777});
 
 
 
@@ -33,7 +33,7 @@ function createHeroModel(){
   model.torso.add(model.torso.sweater);
   var geomButt = new THREE.BoxGeometry(6,1,2);
   var matButt = new THREE.MeshPhongMaterial(
-                          {color:0x365777, shading:THREE.FlatShading});
+                          {color:0x365777});
   model.torso.butt = new THREE.Mesh(geomButt, matButt);
   model.torso.butt.position.y = -1.75;
   model.torso.add(model.torso.butt);
@@ -47,14 +47,14 @@ function createHeroModel(){
   model.head = new THREE.Object3D
   var geomHead = new THREE.BoxGeometry(6,6,6);
   var matHead = new THREE.MeshPhongMaterial(
-                          {color:0xffffff, shading:THREE.FlatShading});
+                          {color:0xffffff});
   var headBase = new THREE.Mesh(geomHead, white);
   model.head.add(headBase);
 
     //Beanie
   var geomBeanie = new THREE.BoxGeometry(6.1,2.5,6.1);
   var matBeanie = new THREE.MeshPhongMaterial(
-                          {color:0x862633, shading:THREE.FlatShading});
+                          {color:0x862633});
   var beanie = new THREE.Mesh(geomBeanie, matBeanie);
   beanie.position.y = 2;
   var geomBrim = new THREE.BoxGeometry(7,1,7);
@@ -74,7 +74,7 @@ function createHeroModel(){
     //eyes
   var geomEye = new THREE.BoxGeometry(.65,1.5,.5);
   var matEye = new THREE.MeshPhongMaterial(
-                          {color:0x000000, shading:THREE.FlatShading});
+                          {color:0x000000});
   model.head.eyes = new THREE.Object3D();
   var eye = new THREE.Mesh(geomEye, matEye);
   eye.position.z = 3;

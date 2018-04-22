@@ -1,0 +1,33 @@
+body {
+
+
+}
+
+
+h2 {
+    font-family: "Garamond", serif;
+    color: #862633;
+}
+
+p{
+  /* font-family: "Arial", sans-serif; */
+
+}
+
+#tokens{
+  position: absolute;
+  bottom: 5vh;
+  left: 30px;
+  width: 100%;
+  text-align: left;
+  pointer-events: none;
+}
+
+#deaths{
+  position: absolute;
+  bottom: 5vh;
+  left: 140px;
+  width: 100%;
+  text-align: left;
+  pointer-events: none;
+}

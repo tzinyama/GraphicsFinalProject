@@ -8,8 +8,8 @@ var hero = {
   hWidth: .75,
   xVel: 0,
   yVel: 0,
-  accel: .015,
-  maxSpeed: .2,
+  accel: .013,
+  maxSpeed: .175,
   xdamp: .2,
   jumpSpeed: .02,
   onGround: true,
@@ -26,13 +26,6 @@ var hero = {
   walking: false,
   model: createHeroModel(),
   update: function(){
-
-
-
-    //Screen wrapping
-    if(this.x >12) this.x = -12;
-    if(this.x <-12) this.x = 12;
-    // if(this.y <-12) this.y = 12;
 
     if(this.y < -12) hero.die();
 
@@ -69,6 +62,16 @@ var hero = {
     //Update player position
     this.x+=this.xVel;
     hero.y += hero.yVel;
+
+    //Screen edges
+    if(this.x >11.5){
+       this.x = 11.5;
+       this.xVel = 0;
+     }
+    if(this.x <-12){
+       this.x = -12;
+       this.xVel = 0;
+     }
 
 
     //Gravity is always applied
@@ -221,34 +224,40 @@ var hero = {
   },
 
   die: function(){
+    game.deaths++;
     this.x = 0;
     this.y = 0;
     this.xVel = 0;
     this.yVel = 0;
+    for(var i = 0; i<tokens.length; i++){
+      tokens[i].model.position.x = tokens[i].x;
+    }
+    for(var i = 0; i<snowPlatforms.length; i++){
+      snowPlatforms[i].model.position.y = snowPlatforms[i].y;
+      snowPlatforms[i].broken = false;
+      snowPlatforms[i].animClock = 0;
+      snowPlatforms[i].yVel = 0;
+    }
+    game.tokens = 0;
+
   }
 }
 
 function checkCol(pos, dir, near, far) {
+
   var ray = new THREE.Raycaster(pos, dir.normalize(), near, far);
   var collisionResults = ray.intersectObjects( collidableMeshList );
+
   if (collisionResults.length > 0) {
-    //console.log(goose.model);
-    //console.log(collisionResults[0].object);
-    //console.log(collidableMeshList[3]);
-    //console.log(goose.model);
-    //console.log(collisionResults[0].object.parent);
-    if(collisionResults[0].object == collidableMeshList[3]){
-      hero.die();
-      console.log("GOOSE!");
-    }else if(collisionResults[0].object == collidableMeshList[4]){
-      snowPlatform.onCollide();
-      // console.log("SNOW!");
+
+    if(collisionResults[0].object.parentObject != undefined){
+      // console.log("onCollide triggered");
+      collisionResults[0].object.parentObject.onCollide()
     }
 
-    //if(collisionResults[0].object.onCollide()){
-      //collisionResults[0].object.onCollide()
-    //}
-    return collisionResults[0].distance;
+    if(collisionResults[0].object.solid){
+      return collisionResults[0].distance;
+    }
   }
 }
 

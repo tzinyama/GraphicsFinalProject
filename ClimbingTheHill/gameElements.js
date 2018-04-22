@@ -1,34 +1,47 @@
-var token = {
-  x: 0,
-  y: 0,
-  model: undefined,
-  init: function(x,y){
-    this.x = x;
-    this.y = y;
-    this.model = createTokenModel()
-    this.model.position.x = x;
-    this.model.position.y = y;
-  },
-  update: function(){
-    this.model.rotation.y += .03;
 
-  },
-  onCollide: function(){
-    this.model.position.x = -100;
-    game.tokens++;
+
+function createToken(x,y){
+
+  var token = {
+    x: 0,
+    y: 0,
+    model: undefined,
+    init: function(x,y){
+      this.x = x;
+      this.y = y;
+      this.model = createTokenModel()
+      this.model.position.x = x;
+      this.model.position.y = y;
+      this.model.base.parentObject = this;
+    },
+    update: function(){
+      this.model.rotation.y += .03;
+
+    },
+    onCollide: function(){
+      this.model.position.x = -100;
+      game.tokens++;
+    }
   }
+
+  token.init(x,y);
+  return token;
+
 }
+
 
 function createTokenModel(){
   var model = new THREE.Object3D();
   var geomToken = new THREE.CylinderGeometry( 1, 1, .2, 32);
   var matToken = new THREE.MeshPhongMaterial(
-                          {color:0xF8CD30, shading:THREE.FlatShading});
+                          {color:0xF8CD30});
   model.base = new THREE.Mesh(geomToken, matToken);
   model.base.rotation.x = Math.PI/2
   model.base.scale.set(.4,.4,.4);
   model.base.position.y = .5;
+  model.base.solid = false;
   model.add(model.base);
+  model.name = "token";
 
   return model;
 }

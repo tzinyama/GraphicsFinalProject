@@ -38,6 +38,10 @@ var testPlat;
 
 var clock = 0;
 
+var snowPlatforms = [];
+var geese = [];
+var tokens = [];
+
 var heldKeys = {
   up: false,
   down: false,
@@ -51,7 +55,7 @@ var heldKeys = {
  */
 function createScene() {
   // Set background color.
-  renderer.setClearColor( 0xACF3FC );
+  renderer.setClearColor( 0xACE4FC );
   scene = new THREE.Scene();
 
   // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
@@ -130,10 +134,13 @@ function createWorld() {
                 );
                 deathPlat.position.x += 10;
                 deathPlat.position.y += .5;
-       collidableMeshList[3] = goose.model.torso.base;
+
 
 
    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
+   platform.solid = true;
+   platform2.solid = true;
+   platform3.solid = true;
    worldModel.add(platform);   //0 child
    worldModel.add(platform2);
    worldModel.add(platform3);
@@ -142,41 +149,57 @@ function createWorld() {
 
    hero.model.position.y += hero.hHeight/2;
    worldModel.add(hero.model);
-   initGoose(1.5,3,1.5,6.5,false);
-   worldModel.add(goose.model);
-   snowPlatform.init(3,-9,5);
-   worldModel.add(snowPlatform.model);
-   collidableMeshList[4] = snowPlatform.model.base;
+   var goose1 = createGoose(1.5,3,1.5,6.5,false);
+   worldModel.add(goose1.model);
+   collidableMeshList.push(goose1.model.torso.base);
+   geese[0] = goose1;
+   var goose2 = createGoose(-5,5,-10,-5,true);
+   worldModel.add(goose2.model);
+   collidableMeshList.push(goose2.model.torso.base);
+   geese[1] = goose2;
 
-   stonePlatform.init(-1,8);
-   worldModel.add(stonePlatform.model);
-   collidableMeshList.push(stonePlatform.model.base);
+   var snowPlatform1 = createSnowPlatform(-9,5,3);
+   worldModel.add(snowPlatform1.model);
+   collidableMeshList.push(snowPlatform1.model.base);
+   snowPlatforms[0] = snowPlatform1;
 
-   token.init(-1,9);
-   worldModel.add(token.model);
+   var snowPlatform1 = createSnowPlatform(9,7,3,1);
+   worldModel.add(snowPlatform1.model);
+   collidableMeshList.push(snowPlatform1.model.base);
+   snowPlatforms[1] = snowPlatform1;
+
+   var stonePlatform1 = createStonePlatform(-2.2,8);
+   worldModel.add(stonePlatform1.model);
+   collidableMeshList.push(stonePlatform1.model.base);
+   stonePlatform1 = createStonePlatform(-1,8);
+   worldModel.add(stonePlatform1.model);
+   collidableMeshList.push(stonePlatform1.model.base);
+   stonePlatform1 = createStonePlatform(.2,8);
+   worldModel.add(stonePlatform1.model);
+   collidableMeshList.push(stonePlatform1.model.base);
+
+   var token1 = createToken(-1,9);
+   worldModel.add(token1.model);
+   collidableMeshList.push(token1.model.base);
+   tokens.push(token1);
+   token1 = createToken(6,0);
+   worldModel.add(token1.model);
+   collidableMeshList.push(token1.model.base);
+   tokens.push(token1);
+   token1 = createToken(9,7);
+   worldModel.add(token1.model);
+   collidableMeshList.push(token1.model.base);
+   tokens.push(token1);
+   token1 = createToken(-9,5);
+   worldModel.add(token1.model);
+   collidableMeshList.push(token1.model.base);
+   tokens.push(token1);
 
    var tempBox = new THREE.Box3().setFromObject(goose.model);
    //collidableMeshList[4] = goose.model;
    return worldModel;
 
 }
-
-//Sets a goose at position (x,y), which walks back and forth between xmin and xmax
-function initGoose(x,y,xmin,xmax,flying){
-  var scale = .25;
-  if(flying){
-    goose.flyingModel();
-    goose.flying = true;
-  }
-  goose.model.scale.set(scale,scale,scale);
-  goose.x = x;
-  goose.y = y;
-  goose.y += scale* 4.2;
-  goose.xmin = xmin;
-  goose.xmax = xmax;
-
-}
-
 
 /*  Render the scene.  This is called for each frame of the animation.
  */
@@ -194,9 +217,16 @@ function updateForFrame() {
   if (currentModel == WORLD) {
     clock = (clock + 1)%1000000;
     hero.update();
-    goose.update();
-    snowPlatform.update();
-    token.update();
+    game.update();
+    for(var i = 0; i < snowPlatforms.length; i++){
+      snowPlatforms[i].update();
+    }
+    for(var i = 0; i < tokens.length; i++){
+      tokens[i].update();
+    }
+    for(var i = 0; i < geese.length; i++){
+      geese[i].update();
+    }
   }
 }
 
