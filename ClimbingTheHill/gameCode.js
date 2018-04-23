@@ -4,9 +4,13 @@
 
 "use strict";
 
-var scene, camera, renderer;  // Three.js rendering basics.
+var scene, camera, renderer;
+var canvas;
 
-var canvas;  // The canvas on which the image is rendered.
+var level, levelElements;
+var levelLayouts = [];
+// var collidableMeshList = [];
+
 
 var STARTER = 0;
 var PINE = 1;
@@ -22,10 +26,6 @@ var models = [];
 // defined by the above constant
 var currentModel = WORLD;
 
-
-// Nodes in the scene graphs that are modified as part of the animation:
-var sphereRotator;  // The sphere is a child of this object; rotating
-                    // this object about the y-axis rotates the sphere.
 
 var animating = false;  // This is set to true when an animation is running.
 
@@ -50,6 +50,174 @@ var heldKeys = {
   space: false,
 }
 
+var levelLayouts = [];
+
+//------------------------------ levelLayouts ----------------------------
+var level = `
+....................
+....................
+....................
+....................
+....................
+....................
+.........oo.........
+.##################.
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+`;
+levelLayouts.push(level);
+
+
+var level = `
+....................
+................|...
+.........<->..#####.
+....................
+....................
+.oo...........o.|.o.
+.##..<->......######
+....................
+....................
+...oo...........o...
+..######.......###..
+....................
+....................
+.........|..oo..|.o.
+###########....#####
+`;
+levelLayouts.push(level);
+
+var level = `
+.............oo.....
+...oo......#####....
+....................
+.######.............
+....................
+..oo......|.........
+....<->...#####.|.o.
+....................
+................####
+....................
+....oo..........o...
+..######.....|.####.
+.............|......
+.o.|.oo......|.oo.|.
+####....<->..#######
+`;
+levelLayouts.push(level);
+
+var level = `
+.............oo.....
+.##........#####....
+....................
+.....<->............
+....................
+..oo....####........
+....................
+.####........##.|.o.
+.......<->......####
+....................
+....oo..............
+..######...<->......
+....................
+..ooo.|........|.o..
+#######....##..#####
+`;
+levelLayouts.push(level);
+
+var level = `
+.............oo.....
+....o......#####....
+....................
+...<->..............
+....................
+..oo................
+.####.....####...oo.
+....................
+................####
+.........oo.........
+......<->...........
+....................
+...##...|..|......##
+##......|..|..##....
+..................##
+`;
+levelLayouts.push(level);
+
+var level = `
+....................
+....oo..........o...
+..######.......###..
+....|..........|....
+....|..........|oo..
+#######....#########
+....................
+.............oo.....
+...oo......#####....
+.######.....|......#
+............|.......
+..oo........|.......
+.####.....#####...o.
+....................
+.................###
+`;
+levelLayouts.push(level);
+
+function createLevel(level){
+  let layout = levelLayouts[level];
+
+  level = new Level(layout);
+  levelElements = level.create();
+  var n = levelElements.length;
+
+  for(var i = 0; i < n; i++){
+    scene.add(levelElements[i].model);
+    collidableMeshList.push(levelElements[i].model);
+  }
+}
+
+function resetLevel(level){
+  createScene();
+  scene.add(camera);
+
+  createLights();
+  createLevel(level);
+  render();
+}
+
+//--------------------------- level gui support -----------------------------------
+
+function createGUI(){
+  var gui = new dat.GUI();
+
+  var parameters =
+  {
+    a: function() { resetLevel(0) },
+    b: function() { resetLevel(1) },
+    c: function() { resetLevel(2) },
+    d: function() { resetLevel(3) },
+    e: function() { resetLevel(4) },
+    f: function() { resetLevel(5) }
+  };
+  // gui.add( parameters )
+  gui.add( parameters, 'a' ).name('Test Level');
+  gui.add( parameters, 'b' ).name('Level 1');
+  gui.add( parameters, 'c' ).name('Level 2');
+  gui.add( parameters, 'd' ).name('Level 3');
+  gui.add( parameters, 'e' ).name('Level 4');
+  gui.add( parameters, 'f' ).name('Level 5');
+
+  gui.open();
+
+}
+
+//--------------------------- scenes -----------------------------------
+
 /*  Create the scene graph.  This function is called once, as soon as the page loads.
  *  The renderer has already been created before this function is called.
  */
@@ -58,15 +226,30 @@ function createScene() {
   renderer.setClearColor( 0xACE4FC );
   scene = new THREE.Scene();
 
-  // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
-  // camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
-  camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
+  // camera = new THREE.OrthographicCamera(-12, 12, 9, -9, -10, 50);
+  camera = new THREE.OrthographicCamera(-80, 80, 60, -60, -10, 50);
+  camera.zoom = 7.5;
+  camera.updateProjectionMatrix();
+
   camera.position.z = 15;
-  camera.position.y = 4;
-  camera.lookAt(new THREE.Vector3(0,0,0));
+  camera.position.x = WIDTH / 2;
+  camera.position.y = (HEIGHT/ 2) + 5;
+  camera.lookAt(WIDTH/2, HEIGHT/2, 0);
+  // camera.lookAt(new THREE.Vector3(0,0,0));
 
-  // create some lights and add them to the scene.
+  hero.model.position.x = CELL_WIDTH * 2; // + hero.hHeight/2;
+  hero.model.position.y = HEIGHT; // CELL_HEIGHT * 2; //+ hero.hHeight/2;
+  scene.add(hero.model);
 
+
+  // var world = createWorld();
+  // models[WORLD] = world;
+  // models[currentModel].rotation.set(0,0,0);
+  // models[currentModel].position.y -= 2
+  // scene.add(models[WORLD]);
+}
+
+function createLights(){
   // dim light shining from above
   scene.add( new THREE.DirectionalLight( 0xffffff, 0.4 ) );
   // a light to shine in the direction the camera faces
@@ -79,166 +262,146 @@ function createScene() {
 
   var ambientLight = new THREE.AmbientLight(0x9999dc, .5);
   scene.add(ambientLight);
-  // //create the model
-  // var model = createTree();
-  //
-  // models[STARTER] = model;
-
-  var world = createWorld();
-  models[WORLD] = world;
-  models[currentModel].rotation.set(0,0,0);
-  models[currentModel].position.y -= 2
-  scene.add(models[WORLD]);
 }
 
-function createWorld() {
-   // Create the game world
-
-   var worldModel = new THREE.Object3D();
-
-   var platform = new THREE.Mesh(
-            new THREE.BoxGeometry(20,1,1.5),
-            new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-          );
-   collidableMeshList[0] = platform;
-
-
-   var platform2 = new THREE.Mesh(
-               new THREE.BoxGeometry(5,1,1.5),
-               new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-             );
-             platform2.position.x += 4;
-             platform2.position.y += 3;
-    collidableMeshList[1] = platform2;
-
-
-
-    var platform3 = new THREE.Mesh(
-                new THREE.BoxGeometry(1.5,3,1.5),
-                new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-              );
-              platform3.position.x -= 6;
-              platform3.position.y += 1;
-     collidableMeshList[2] = platform3;
-
-     testPlat = new THREE.Mesh(
-                new THREE.BoxGeometry(.8,2,.1),
-                new THREE.MeshLambertMaterial( { color: 0xff00ff } )
-              );
-              testPlat.position.y -=1;
-              testPlat.position.z+=1;
-
-      var deathPlat = new THREE.Mesh(
-                  new THREE.BoxGeometry(2,1,1),
-                  new THREE.MeshLambertMaterial( { color: 0xff0033 } )
-                );
-                deathPlat.position.x += 10;
-                deathPlat.position.y += .5;
-
-
-
-   platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
-   platform.solid = true;
-   platform2.solid = true;
-   platform3.solid = true;
-   worldModel.add(platform);   //0 child
-   worldModel.add(platform2);
-   worldModel.add(platform3);
-   //worldModel.add(deathPlat);
-   //worldModel.add(testPlat);
-
-   hero.model.position.y += hero.hHeight/2;
-   worldModel.add(hero.model);
-   var goose1 = createGoose(1.5,3,1.5,6.5,false);
-   worldModel.add(goose1.model);
-   collidableMeshList.push(goose1.model.torso.base);
-   geese[0] = goose1;
-   var goose2 = createGoose(-5,5,-10,-5,true);
-   worldModel.add(goose2.model);
-   collidableMeshList.push(goose2.model.torso.base);
-   geese[1] = goose2;
-
-   var snowPlatform1 = createSnowPlatform(-9,5,3);
-   worldModel.add(snowPlatform1.model);
-   collidableMeshList.push(snowPlatform1.model.base);
-   snowPlatforms[0] = snowPlatform1;
-
-   var snowPlatform1 = createSnowPlatform(9,7,3,1);
-   worldModel.add(snowPlatform1.model);
-   collidableMeshList.push(snowPlatform1.model.base);
-   snowPlatforms[1] = snowPlatform1;
-
-   var stonePlatform1 = createStonePlatform(-2.2,8);
-   worldModel.add(stonePlatform1.model);
-   collidableMeshList.push(stonePlatform1.model.base);
-   stonePlatform1 = createStonePlatform(-1,8);
-   worldModel.add(stonePlatform1.model);
-   collidableMeshList.push(stonePlatform1.model.base);
-   stonePlatform1 = createStonePlatform(.2,8);
-   worldModel.add(stonePlatform1.model);
-   collidableMeshList.push(stonePlatform1.model.base);
-
-   var token1 = createToken(-1,9);
-   worldModel.add(token1.model);
-   collidableMeshList.push(token1.model.base);
-   tokens.push(token1);
-   token1 = createToken(6,0);
-   worldModel.add(token1.model);
-   collidableMeshList.push(token1.model.base);
-   tokens.push(token1);
-   token1 = createToken(9,7);
-   worldModel.add(token1.model);
-   collidableMeshList.push(token1.model.base);
-   tokens.push(token1);
-   token1 = createToken(-9,5);
-   worldModel.add(token1.model);
-   collidableMeshList.push(token1.model.base);
-   tokens.push(token1);
-
-   var tempBox = new THREE.Box3().setFromObject(goose.model);
-   //collidableMeshList[4] = goose.model;
-   return worldModel;
-
-}
-
-/*  Render the scene.  This is called for each frame of the animation.
- */
-function render() {
-    renderer.render(scene, camera);
-}
-
-
-/*  When an animation is in progress, this function is called just before rendering each
- *  frame of the animation, to make any changes necessary in the scene graph to prepare
- *  for that frame.
- */
-function updateForFrame() {
-
-  if (currentModel == WORLD) {
-    clock = (clock + 1)%1000000;
-    hero.update();
-    game.update();
-    for(var i = 0; i < snowPlatforms.length; i++){
-      snowPlatforms[i].update();
-    }
-    for(var i = 0; i < tokens.length; i++){
-      tokens[i].update();
-    }
-    for(var i = 0; i < geese.length; i++){
-      geese[i].update();
-    }
-  }
-}
-
+// function createWorld() {
+//    // Create the game world
+//
+//    var worldModel = new THREE.Object3D();
+//
+//    var platform = new THREE.Mesh(
+//             new THREE.BoxGeometry(20,1,1.5),
+//             new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+//           );
+//    collidableMeshList[0] = platform;
+//
+//
+//    var platform2 = new THREE.Mesh(
+//                new THREE.BoxGeometry(5,1,1.5),
+//                new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+//              );
+//              platform2.position.x += 4;
+//              platform2.position.y += 3;
+//     collidableMeshList[1] = platform2;
+//
+//
+//
+//     var platform3 = new THREE.Mesh(
+//                 new THREE.BoxGeometry(1.5,3,1.5),
+//                 new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+//               );
+//               platform3.position.x -= 6;
+//               platform3.position.y += 1;
+//      collidableMeshList[2] = platform3;
+//
+//      testPlat = new THREE.Mesh(
+//                 new THREE.BoxGeometry(.8,2,.1),
+//                 new THREE.MeshLambertMaterial( { color: 0xff00ff } )
+//               );
+//               testPlat.position.y -=1;
+//               testPlat.position.z+=1;
+//
+//       var deathPlat = new THREE.Mesh(
+//                   new THREE.BoxGeometry(2,1,1),
+//                   new THREE.MeshLambertMaterial( { color: 0xff0033 } )
+//                 );
+//                 deathPlat.position.x += 10;
+//                 deathPlat.position.y += .5;
+//
+//
+//
+//    platform.position.y = -0.5; // Puts top of cylinder just below the xz-plane.
+//    platform.solid = true;
+//    platform2.solid = true;
+//    platform3.solid = true;
+//    worldModel.add(platform);   //0 child
+//    worldModel.add(platform2);
+//    worldModel.add(platform3);
+//    //worldModel.add(deathPlat);
+//    //worldModel.add(testPlat);
+//
+//    hero.model.position.y += hero.hHeight/2;
+//    worldModel.add(hero.model);
+//    var goose1 = createGoose(1.5,3,1.5,6.5,false);
+//    worldModel.add(goose1.model);
+//    collidableMeshList.push(goose1.model.torso.base);
+//    geese[0] = goose1;
+//    var goose2 = createGoose(-5,5,-10,-5,true);
+//    worldModel.add(goose2.model);
+//    collidableMeshList.push(goose2.model.torso.base);
+//    geese[1] = goose2;
+//
+//    var snowPlatform1 = createSnowPlatform(-9,5,3);
+//    worldModel.add(snowPlatform1.model);
+//    collidableMeshList.push(snowPlatform1.model.base);
+//    snowPlatforms[0] = snowPlatform1;
+//
+//    var snowPlatform1 = createSnowPlatform(9,7,3,1);
+//    worldModel.add(snowPlatform1.model);
+//    collidableMeshList.push(snowPlatform1.model.base);
+//    snowPlatforms[1] = snowPlatform1;
+//
+//    var stonePlatform1 = createStonePlatform(-2.2,8);
+//    worldModel.add(stonePlatform1.model);
+//    collidableMeshList.push(stonePlatform1.model.base);
+//    stonePlatform1 = createStonePlatform(-1,8);
+//    worldModel.add(stonePlatform1.model);
+//    collidableMeshList.push(stonePlatform1.model.base);
+//    stonePlatform1 = createStonePlatform(.2,8);
+//    worldModel.add(stonePlatform1.model);
+//    collidableMeshList.push(stonePlatform1.model.base);
+//
+//    var token1 = createToken(-1,9);
+//    worldModel.add(token1.model);
+//    collidableMeshList.push(token1.model.base);
+//    tokens.push(token1);
+//    token1 = createToken(6,0);
+//    worldModel.add(token1.model);
+//    collidableMeshList.push(token1.model.base);
+//    tokens.push(token1);
+//    token1 = createToken(9,7);
+//    worldModel.add(token1.model);
+//    collidableMeshList.push(token1.model.base);
+//    tokens.push(token1);
+//    token1 = createToken(-9,5);
+//    worldModel.add(token1.model);
+//    collidableMeshList.push(token1.model.base);
+//    tokens.push(token1);
+//
+//    var tempBox = new THREE.Box3().setFromObject(goose.model);
+//    //collidableMeshList[4] = goose.model;
+//    return worldModel;
+//
+// }
 
 
 //--------------------------- animation support -----------------------------------
 
-/* This function runs the animation by calling updateForFrame() then calling render().
- * Finally, it arranges for itself to be called again to do the next frame.  When the
- * value of animating is set to false, this function does not schedule the next frame,
- * so the animation stops.
- */
+function render() {
+    renderer.render(scene, camera);
+}
+
+function updateForFrame() {
+
+  clock = (clock + 1)%1000000;
+  hero.update();
+  // game.update();
+  // for(var i = 0; i < snowPlatforms.length; i++){
+  //   snowPlatforms[i].update();
+  // }
+  // for(var i = 0; i < tokens.length; i++){
+  //   tokens[i].update();
+  // }
+  // for(var i = 0; i < geese.length; i++){
+  //   geese[i].update();
+  // }
+
+  var n =  levelElements.length;
+  for(var i = 0; i < n; i++){
+    levelElements[i].update();
+  }
+}
+
 function doFrame() {
    if (animating) {
         updateForFrame();
@@ -247,10 +410,6 @@ function doFrame() {
   }
 }
 
-
-/* Responds when the setting of the "Animate" checkbox is changed.
- * This function will start or stop the animation, depending on its setting.
- */
 function doAnimateCheckbox() {
    var anim = document.getElementById("animate").checked;
    if (anim != animating) {
@@ -261,12 +420,8 @@ function doAnimateCheckbox() {
    }
 }
 
-
-
 //----------------------------- keyboard support ----------------------------------
 
-/*  Responds to user's key press.  Here, it is used to rotate the model.
- */
 function doKey(event) {
   var code = event.code;
   var rotated = true;
@@ -307,25 +462,24 @@ function doKeyUp(event) {
 function doChangeModel() {
    // var axle = document.getElementById("axle").checked;
    // var car = document.getElementById("car").checked;
-   var diskworld = document.getElementById("diskworld").checked;
-
-   // var newModel = axle ? AXLE : car ? CAR : diskworld ? WORLD : STARTER;
-   var newModel = WORLD;
-
-   if (newModel != currentModel) {
-      scene.remove(models[currentModel]);
-      currentModel = newModel;
-      models[currentModel].rotation.set(0.2,0,0);
-      scene.add( models[currentModel]);
-      if (!animating) {
-         render();
-      }
-   }
+   // var diskworld = document.getElementById("diskworld").checked;
+   //
+   // // var newModel = axle ? AXLE : car ? CAR : diskworld ? WORLD : STARTER;
+   // var newModel = WORLD;
+   //
+   // if (newModel != currentModel) {
+   //    scene.remove(models[currentModel]);
+   //    currentModel = newModel;
+   //    models[currentModel].rotation.set(0.2,0,0);
+   //    scene.add( models[currentModel]);
+   //    if (!animating) {
+   //       render();
+   //    }
+   // }
 }
 
-/**
- *  This init() function is called when by the onload event when the document has loaded.
- */
+//-------------------------------------initialization ----------------------------------
+
 function init() {
   try {
     canvas = document.getElementById("glcanvas");
@@ -352,6 +506,10 @@ function init() {
   // document.getElementById("starter").onchange = doChangeModel;
 
   createScene();
+  createLights();
+  createLevel(0);
+
+  createGUI();
   render();
   doAnimateCheckbox();
 }

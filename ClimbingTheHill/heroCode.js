@@ -27,7 +27,7 @@ var hero = {
   model: createHeroModel(),
   update: function(){
 
-    if(this.y < -12) hero.die();
+    if(this.y < 0) hero.die(); // was (this.y < -12)
 
     //Model rotation
     if(this.facingRight) this.model.rotation.set(0,.7,0);
@@ -64,12 +64,12 @@ var hero = {
     hero.y += hero.yVel;
 
     //Screen edges
-    if(this.x >11.5){
-       this.x = 11.5;
+    if(this.x > WIDTH){ // was 11.5
+       this.x = WIDTH;
        this.xVel = 0;
      }
-    if(this.x <-12){
-       this.x = -12;
+    if(this.x < 0){ // was -12
+       this.x = 0;
        this.xVel = 0;
      }
 
@@ -225,8 +225,8 @@ var hero = {
 
   die: function(){
     game.deaths++;
-    this.x = 0;
-    this.y = 0;
+    this.x = CELL_WIDTH * 2; // was 0;
+    this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
     this.xVel = 0;
     this.yVel = 0;
     for(var i = 0; i<tokens.length; i++){
@@ -239,7 +239,6 @@ var hero = {
       snowPlatforms[i].yVel = 0;
     }
     game.tokens = 0;
-
   }
 }
 
