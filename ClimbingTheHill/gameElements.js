@@ -1,21 +1,34 @@
 //Dependencies: levels.js, Models/
 //-------------------------- models ---------------------
 
-var stonePlatformModel = createStonePlatformModel(5,-8,true);
+var stonePlatformModel = createStonePlatformModel(0,0,true);
 
-var livePlatform = new THREE.Mesh(
-  new THREE.BoxGeometry(CELL_WIDTH * 3, CELL_HEIGHT/2, CELL_WIDTH/2),
-  new THREE.MeshLambertMaterial( { color: 0xAA0000 } )
-);
+var snowPlatformModel = createSnowPlatformModel(3, 0, 0, 0);
+
+var tokenModel = createTokenModel();
+
+var gooseModel = createGooseModel();
 
 var wallModel = new THREE.Mesh(
   new THREE.BoxGeometry(CELL_WIDTH/2 + CELL_WIDTH/4, CELL_HEIGHT + CELL_HEIGHT/2, CELL_WIDTH/2),
   new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
 );
 
-var tokenModel = createTokenModel();
+//---------------------------collidable meshes------------
+var stonePlatformCollidable = new THREE.Mesh(
+  new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT, CELL_WIDTH),
+  new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+);
 
-var gooseModel = createGooseModel();
+var snowPlatformCollidable = new THREE.Mesh(
+  new THREE.BoxGeometry(CELL_WIDTH * 3, .25, CELL_WIDTH),
+  new THREE.MeshLambertMaterial( { color: 0xFFFFFF } )
+);
+
+var tokenCollidable = new THREE.Mesh(
+  new THREE.CylinderGeometry( .05, .05, .05, 10), // very samll spehere
+  new THREE.MeshLambertMaterial( { color: 0xF8CD30 } )
+);
 
 //-------------------------- platform ---------------------
 
@@ -25,16 +38,50 @@ class Platform{
     this.y = y;
     this.isLive = isLive;
 
-    this.model = isLive ? livePlatform.clone() : stonePlatformModel.clone();
+    if(this.isLive){
+      this.w = 3; // default for live platforms
+      this.yVel =  0;
+
+      this.animClock =  0;
+      this.broken = false;
+
+      this.model = snowPlatformModel.clone();
+      this.collidableMesh = snowPlatformCollidable.clone();
+    }
+    else{
+      this.model = stonePlatformModel.clone();
+      this.collidableMesh = stonePlatformCollidable.clone();
+    }
+    this.collidableMesh.parentObject = this;
+
     this.model.position.set(x, y, 0);
+    this.collidableMesh.position.set(x, y, 0);
   }
 
   update(){
-    // do something
+    // only live platforms update
+    if(this.isLive && this.broken){
+      this.animClock++;
+      if(this.animClock<30){
+        this.model.position.x = this.x + Math.sin(.6*this.animClock)/20;
+        this.model.position.y = this.y + -Math.cos(.6*this.animClock)/20;
+      }
+      else if(this.animClock< 200){
+        this.model.position.x = this.x
+        this.yVel -= .02;
+        this.model.position.y +=this.yVel;
+      }else{
+        this.model.position.y = this.y;
+        this.broken = false;
+        this.animClock = 0;
+        this.yVel = 0;
+      }
+      this.collidableMesh.position.set(this.model.position.x, this.model.position.y, 0);
+    }
   }
 
   onCollide(){
-    // do something
+    this.broken = true;
   }
 }
 
@@ -48,6 +95,8 @@ class Wall{
 
     this.model = wallModel.clone();
     this.model.position.set(x, y, 0);
+
+    this.collidableMesh = this.model;
   }
 
   update(){
@@ -69,6 +118,10 @@ class Token{
 
     this.model = tokenModel.clone();
     this.model.position.set(x, y, 0);
+
+    this.collidableMesh = this.model.clone(); //tokenCollidable.clone();
+    this.collidableMesh.position.set(x, y, 0);
+    this.collidableMesh.parentObject = this
   }
 
   update(){
@@ -77,8 +130,9 @@ class Token{
 
   onCollide(){
     // move off the screen
-    this.model.position.x = -100;
-    game.tokens++;
+    // this.model.position.x = -100;
+    // game.tokens++;
+    console.log("collision")
   }
 }
 
@@ -89,21 +143,27 @@ class Goose{
     var scale = .25;
 
     this.x = x;
-    this.y = y;
-    this.y += scale* 4.2;
+    this.y = y + .1;
     this.xmin = xmin;
     this.xmax = xmax;
+
+    this.speed = .04;
 
     this.goingRight = true;
     this.flying = false;
 
-    this.model.torso.base.parentObject = this;
-
-    this.model = gooseModel.clone();
+    this.model = createGooseModel();
     if(flying){
       this.flyingModel();
       this.flying = true;
     }
+    this.model.scale.set(scale, scale,scale);
+    this.model.torso.base.parentObject = this;
+
+    // not clean
+    this.collidableMesh = this.model.torso.base.clone();
+    this.collidableMesh.scale.set(scale, scale,scale);
+    this.collidableMesh.parentObject = this
   }
 
   onCollide(){
@@ -129,6 +189,11 @@ class Goose{
 
     this.model.position.x = this.x;
     this.model.position.y = this.y;
+
+    // not clean
+    this.collidableMesh.position.x = this.x;
+    this.collidableMesh.position.y = this.y;
+    this.collidableMesh.rotation.y = this.model.rotation.y;
   }
 
   animate(){

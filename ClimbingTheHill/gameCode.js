@@ -54,6 +54,7 @@ var heldKeys = {
 
 function createLevel(level){
   let layout = levelLayouts[level];
+  collidableMeshList = [];
 
   level = new Level(layout);
   levelElements = level.create();
@@ -61,7 +62,9 @@ function createLevel(level){
 
   for(var i = 0; i < n; i++){
     scene.add(levelElements[i].model);
-    collidableMeshList.push(levelElements[i].model);
+    scene.add(levelElements[i].collidableMesh);
+
+    collidableMeshList.push(levelElements[i].collidableMesh);
   }
 }
 
@@ -269,7 +272,7 @@ function updateForFrame() {
 
   clock = (clock + 1)%1000000;
   hero.update();
-  // game.update();
+  game.update();
   // for(var i = 0; i < snowPlatforms.length; i++){
   //   snowPlatforms[i].update();
   // }
@@ -284,6 +287,7 @@ function updateForFrame() {
   for(var i = 0; i < n; i++){
     levelElements[i].update();
   }
+  // console.log(collidableMeshList[0]);
 }
 
 function doFrame() {

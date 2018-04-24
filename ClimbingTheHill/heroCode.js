@@ -80,7 +80,7 @@ var hero = {
     }
     //console.log(goose.model);
 
-    var offsetY = 1.9;
+    var offsetY = 0;
 
     var hBoundingBox = [
         new THREE.Vector3(this.x -.4, this.y + 1 - offsetY, 0),
@@ -254,9 +254,9 @@ function checkCol(pos, dir, near, far) {
       collisionResults[0].object.parentObject.onCollide()
     }
 
-    if(collisionResults[0].object.solid){
+    // if(collisionResults[0].object.solid){
       return collisionResults[0].distance;
-    }
+    //}
   }
 }
 
