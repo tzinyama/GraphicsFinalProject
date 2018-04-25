@@ -219,20 +219,22 @@ function render() {
  */
 function updateForFrame() {
 
-  if (currentModel == WORLD) {
-    clock = (clock + 1)%1000000;
-    hero.update();
-    game.update();
-    for(var i = 0; i < snowPlatforms.length; i++){
-      snowPlatforms[i].update();
+  if(!game.paused){
+    if (currentModel == WORLD) {
+      clock = (clock + 1)%1000000;
+      hero.update();
+      game.update();
+      for(var i = 0; i < snowPlatforms.length; i++){
+        snowPlatforms[i].update();
+      }
+      for(var i = 0; i < tokens.length; i++){
+        tokens[i].update();
+      }
+      for(var i = 0; i < geese.length; i++){
+        geese[i].update();
+      }
+      if(!cloud.done) cloud.update();
     }
-    for(var i = 0; i < tokens.length; i++){
-      tokens[i].update();
-    }
-    for(var i = 0; i < geese.length; i++){
-      geese[i].update();
-    }
-    if(!cloud.done) cloud.update();
   }
 }
 
@@ -282,6 +284,7 @@ function doKey(event) {
       case "ArrowUp":  heldKeys.up = true;  break;    // up arrow
       case "Space":  heldKeys.space = true;  break;
       case "ArrowDown":  heldKeys.down = true;  break;    // down arrow
+      case "Escape":  game.pause();  break;    // down arrow
   }
   if (rotated) {
     event.preventDefault();  // Prevent keys from scrolling the page.
