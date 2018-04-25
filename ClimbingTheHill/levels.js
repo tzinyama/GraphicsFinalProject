@@ -12,6 +12,7 @@ var PLATFORM = "#";
 var WALL = '|';
 var COIN = "o";
 var GOOSE = "G";
+var FLYING_GOOSE = "F";
 
 // always define a live platform as <->; Live platforms have standardized length
 var LIVE_PLATFORM = "-";
@@ -24,7 +25,7 @@ var levelLayouts = [];
 
 var level = `
 ....................
-....................
+...............F....
 ....<->.............
 ...........G........
 .........#####......
@@ -182,6 +183,9 @@ class Level{
     }
     else if(item === GOOSE){
       element = new Goose(x, y, x-CELL_WIDTH*2, x+CELL_WIDTH*2, false);
+    }
+    else if(item === FLYING_GOOSE){
+      element = new Goose(x, y, x-CELL_WIDTH*2, x+CELL_WIDTH*2, true);
     }
     return element;
   }
