@@ -16,18 +16,20 @@ p{
 
 #tokens{
   position: absolute;
-  bottom: 5vh;
+  top: 680px;
   left: 30px;
   width: 100%;
   text-align: left;
   pointer-events: none;
+  font-family:sans-serif;
 }
 
 #deaths{
   position: absolute;
-  bottom: 5vh;
+  top: 680px;
   left: 140px;
   width: 100%;
   text-align: left;
   pointer-events: none;
+  font-family:sans-serif;
 }

@@ -9,7 +9,7 @@ var hero = {
   xVel: 0,
   yVel: 0,
   accel: .013,
-  maxSpeed: .175,
+  maxSpeed: .17,
   xdamp: .2,
   jumpSpeed: .02,
   onGround: true,
@@ -174,12 +174,14 @@ var hero = {
       this.yVel += .2;
       this.onGround = false;
       this.canJump = false;
+      cloud.init(this.x, this.y);
     }else if(this.onGround && ! this.canJump){
       return; //if jump was held since before landing, do nothing
     }else if( this.jumpHold > 0 ){ //Increase jump height if held longer
       this.jumpHold--;
       this.yVel += this.jumpSpeed;
     } else if (this.canDoubleJump && !this.haveDoubleJumped){ //double jump
+      cloud.init(this.x, this.y);
       this.yVel = .15;
       this.canDoubleJump = false;
       this.haveDoubleJumped = true;
@@ -239,6 +241,7 @@ var hero = {
       snowPlatforms[i].yVel = 0;
     }
     game.tokens = 0;
+    cloud.model.position.x = -100;
 
   }
 }

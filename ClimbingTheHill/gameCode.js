@@ -41,6 +41,7 @@ var clock = 0;
 var snowPlatforms = [];
 var geese = [];
 var tokens = [];
+var cloud;
 
 var heldKeys = {
   up: false,
@@ -195,6 +196,10 @@ function createWorld() {
    collidableMeshList.push(token1.model.base);
    tokens.push(token1);
 
+   cloud = createCloud();
+   cloud.init(-100,0);
+   worldModel.add(cloud.model);
+
    var tempBox = new THREE.Box3().setFromObject(goose.model);
    //collidableMeshList[4] = goose.model;
    return worldModel;
@@ -227,6 +232,7 @@ function updateForFrame() {
     for(var i = 0; i < geese.length; i++){
       geese[i].update();
     }
+    if(!cloud.done) cloud.update();
   }
 }
 
