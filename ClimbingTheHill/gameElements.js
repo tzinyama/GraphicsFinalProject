@@ -119,7 +119,7 @@ class Token{
   }
 
   update(){
-    this.model.rotation.y += 0.5;
+    this.model.rotation.y += 0.03;
     this.collidableMesh.rotation.y = this.model.rotation.y;
   }
 
@@ -127,6 +127,7 @@ class Token{
     this.model.position.x = -100;
     this.collidableMesh.position.x = -100;
     game.tokens++;
+    game.update();
   }
 }
 

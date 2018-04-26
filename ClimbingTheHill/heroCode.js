@@ -225,6 +225,7 @@ var hero = {
 
   die: function(){
     game.deaths++;
+    game.update();
     this.x = CELL_WIDTH * 2; // was 0;
     this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
     this.xVel = 0;
@@ -253,7 +254,7 @@ function checkCol(pos, dir, near, far) {
     if(collisionResults[0].object.parentObject != undefined){
       collisionResults[0].object.parentObject.onCollide()
     }
-    
+
     return collisionResults[0].distance;
   }
 }

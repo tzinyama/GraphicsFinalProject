@@ -7,7 +7,7 @@
 var scene, camera, renderer;
 var canvas;
 
-var level, levelElements;
+var levelElements;
 
 var animating = false;  // This is set to true when an animation is running.
 
@@ -139,7 +139,7 @@ function updateForFrame() {
 
     if(!cloud.done) cloud.update();
     hero.update();
-    game.update();
+    
 
     var n =  levelElements.length;
     for(var i = 0; i < n; i++){

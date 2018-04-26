@@ -14,6 +14,7 @@ var game = {
 
   pause:function(){
     this.paused = !this.paused;
+    document.getElementById("animate").checked = !this.paused;
     if(this.paused){
       document.getElementById("pause").innerHTML = ("PAUSED");
     }else{

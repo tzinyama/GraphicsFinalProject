@@ -23,7 +23,7 @@ var LIVE_PLATFORM_END = '>';
 
 var levelLayouts = [];
 
-var level = `
+var level1 = `
 ....................
 ..oo..............o.
 ..##.............###
@@ -40,10 +40,10 @@ var level = `
 .....|.......|..ooo|
 ######.......#######
 `;
-levelLayouts.push(level);
+levelLayouts.push(level1);
 
 
-var level = `
+var level2 = `
 ....................
 ................|...
 .........<->..#####.
@@ -60,9 +60,9 @@ var level = `
 .........|..oo..|.o.
 ###########....#####
 `;
-levelLayouts.push(level);
+levelLayouts.push(level2);
 
-var level = `
+var level3 = `
 .............G......
 ...oo......#####....
 ....................
@@ -79,9 +79,9 @@ var level = `
 .o.|.oo......|.oo.|.
 ####....<->..#######
 `;
-levelLayouts.push(level);
+levelLayouts.push(level3);
 
-var level = `
+var level4 = `
 .............oo.....
 .##........#####....
 ....................
@@ -98,9 +98,9 @@ var level = `
 ..ooo.|........|.o..
 #######....##..#####
 `;
-levelLayouts.push(level);
+levelLayouts.push(level4);
 
-var level = `
+var level5 = `
 .............oo.....
 ....o......#####....
 ....................
@@ -117,9 +117,9 @@ var level = `
 ##......|..|..##....
 ..................##
 `;
-levelLayouts.push(level);
+levelLayouts.push(level5);
 
-var level = `
+var level6 = `
 ....................
 ....oo..........o...
 ..######.......###..
@@ -136,7 +136,7 @@ var level = `
 ....................
 .................###
 `;
-levelLayouts.push(level);
+levelLayouts.push(level6);
 
 class Level{
   // layout is a string
