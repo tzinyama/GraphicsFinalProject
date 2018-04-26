@@ -1,7 +1,8 @@
 //Dependencies: levels.js, Models/
+
 //-------------------------- models ---------------------
 
-var stonePlatformModel = createStonePlatformModel(0,0,true);
+var stonePlatformModel = createStonePlatformModel(0,0,false);
 
 var snowPlatformModel = createSnowPlatformModel(3, 0, 0, 0);
 
@@ -9,12 +10,10 @@ var tokenModel = createTokenModel();
 
 var gooseModel = createGooseModel();
 
-var wallModel = new THREE.Mesh(
-  new THREE.BoxGeometry(CELL_WIDTH/2 + CELL_WIDTH/4, CELL_HEIGHT + CELL_HEIGHT/2, CELL_WIDTH/2),
-  new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-);
+var wallModel = createWallModel(0,0, false);
 
 //---------------------------collidable meshes------------
+
 var stonePlatformCollidable = new THREE.Mesh(
   new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT, CELL_WIDTH),
   new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
@@ -23,11 +22,6 @@ var stonePlatformCollidable = new THREE.Mesh(
 var snowPlatformCollidable = new THREE.Mesh(
   new THREE.BoxGeometry(CELL_WIDTH * 3, .25, CELL_WIDTH),
   new THREE.MeshLambertMaterial( { color: 0xFFFFFF } )
-);
-
-var tokenCollidable = new THREE.Mesh(
-  new THREE.CylinderGeometry( .05, .05, .05, 10), // very samll spehere
-  new THREE.MeshLambertMaterial( { color: 0xF8CD30 } )
 );
 
 //-------------------------- platform ---------------------
@@ -100,7 +94,7 @@ class Wall{
   }
 
   update(){
-
+    // do something
   }
 
   onCollide(){
@@ -119,36 +113,38 @@ class Token{
     this.model = tokenModel.clone();
     this.model.position.set(x, y, 0);
 
-    this.collidableMesh = this.model.clone(); //tokenCollidable.clone();
+    this.collidableMesh = this.model.clone();
     this.collidableMesh.position.set(x, y, 0);
     this.collidableMesh.parentObject = this
   }
 
   update(){
     this.model.rotation.y += 0.5;
+    this.collidableMesh.rotation.y = this.model.rotation.y;
   }
 
   onCollide(){
-    his.model.position.x = -100;
+    this.model.position.x = -100;
     this.collidableMesh.position.x = -100;
     game.tokens++;
   }
 }
 
-// //-------------------------- goose ---------------------
+//-------------------------- goose ---------------------
 
 class Goose{
   constructor(x, y, xmin, xmax, flying){
     var scale = .25;
 
-    this.x = x;
+    // generate random starting position
+    this.x = x + (Math.random() * CELL_WIDTH) * (Math.random() < 0.5 ? -1 : 1);
     this.y = y + .1;
     this.xmin = xmin;
     this.xmax = xmax;
 
     this.speed = .04;
 
-    this.goingRight = true;
+    this.goingRight = (Math.random() < 0.5);
     this.flying = false;
 
     this.model = createGooseModel();
@@ -162,7 +158,7 @@ class Goose{
     // not clean
     this.collidableMesh = this.model.torso.base.clone();
     this.collidableMesh.scale.set(scale, scale,scale);
-    this.collidableMesh.parentObject = this
+    this.collidableMesh.parentObject = this;
   }
 
   onCollide(){
@@ -234,7 +230,6 @@ class Goose{
     this.model.leftLeg.rotation.x = -2;
   }
 }
-
 
 //-------------------------- cloud ---------------------
 
