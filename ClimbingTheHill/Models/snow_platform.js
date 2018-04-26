@@ -1,3 +1,5 @@
+"use strict";
+
 function createSnowPlatformModel( wid, x, y, seed ){
 
   var model = new THREE.Object3D();

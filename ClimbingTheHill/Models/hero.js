@@ -1,4 +1,3 @@
-//Document for modelling
 "use strict";
 
 var Colors = {
@@ -10,8 +9,6 @@ var Colors = {
     blue:0x68c3c0,
     maroon:0x862633,
 };
-
-//Hero/////////////////////////////////////////////////////
 
 function createHeroModel(){
   var model = new THREE.Object3D();

@@ -1,3 +1,5 @@
+"use strict";
+
 function createCloudModel(){
 
   var model = new THREE.Object3D();

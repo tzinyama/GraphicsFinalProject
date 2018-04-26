@@ -1,3 +1,5 @@
+"use strict";
+
 function createTokenModel(){
   var model = new THREE.Object3D();
   var geomToken = new THREE.CylinderGeometry( 1, 1, .2, 32);

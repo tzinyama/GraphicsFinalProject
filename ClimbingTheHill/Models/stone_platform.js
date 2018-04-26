@@ -1,3 +1,5 @@
+"use strict";
+
 function createStonePlatformModel(x,y,snowy){
   var model = new THREE.Object3D();
 

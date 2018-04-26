@@ -1,3 +1,5 @@
+"use strict";
+
 function createGooseModel(){
   var model = new THREE.Object3D();
 
