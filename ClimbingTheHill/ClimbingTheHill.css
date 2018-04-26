@@ -1,8 +1,6 @@
 body {
 
-
 }
-
 
 h2 {
     font-family: "Garamond", serif;
@@ -10,8 +8,18 @@ h2 {
 }
 
 p{
-  /* font-family: "Arial", sans-serif; */
 
+}
+
+#pause{
+  position: absolute;
+  top: 330px;
+  left:275px;
+  width: 100%;
+  text-align: left;
+  font-size: 64px;
+  pointer-events: none;
+  font-family:sans-serif;
 }
 
 #tokens{

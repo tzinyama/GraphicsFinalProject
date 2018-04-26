@@ -128,16 +128,16 @@ function render() {
 }
 
 function updateForFrame() {
+  if(!game.paused){
+    clock = (clock + 1)%1000000;
+    hero.update();
+    game.update();
 
-  clock = (clock + 1)%1000000;
-  hero.update();
-  game.update();
-
-  var n =  levelElements.length;
-  for(var i = 0; i < n; i++){
-    levelElements[i].update();
+    var n =  levelElements.length;
+    for(var i = 0; i < n; i++){
+      levelElements[i].update();
+    }
   }
-  // console.log(collidableMeshList[0]);
 }
 
 function doFrame() {
@@ -186,6 +186,7 @@ function doKeyUp(event) {
       case "ArrowUp":  heldKeys.up = false; jumpRelease(); break;    // up arrow
       case "Space":  heldKeys.space = false; jumpRelease(); break;
       case "ArrowDown":  heldKeys.down = false;  break;    // down arrow
+      case "Escape":  game.pause();  break;
   }
 }
 
