@@ -21,6 +21,7 @@ var clock = 0;
 var snowPlatforms = [];
 var geese = [];
 var tokens = [];
+var cloud;
 
 var heldKeys = {
   up: false,
@@ -99,11 +100,16 @@ function createScene() {
   camera.position.x = WIDTH / 2;
   camera.position.y = (HEIGHT/ 2) + 5;
   camera.lookAt(WIDTH/2, HEIGHT/2, 0);
-  // camera.lookAt(new THREE.Vector3(0,0,0));
 
-  hero.model.position.x = CELL_WIDTH * 2; // + hero.hHeight/2;
-  hero.model.position.y = HEIGHT; // CELL_HEIGHT * 2; //+ hero.hHeight/2;
+  // hero
+  hero.model.position.x = CELL_WIDTH * 2;
+  hero.model.position.y = HEIGHT;
   scene.add(hero.model);
+
+  // cloud effect
+  cloud = createCloud();
+  cloud.init(-100);
+  scene.add(cloud.model);
 }
 
 function createLights(){
@@ -130,6 +136,8 @@ function render() {
 function updateForFrame() {
   if(!game.paused){
     clock = (clock + 1)%1000000;
+
+    if(!cloud.done) cloud.update();
     hero.update();
     game.update();
 

@@ -106,10 +106,9 @@ var hero = {
     if (checkUp){
       if(this.yVel > 0){
           this.yVel = 0;
-          //this.y += .25-checkUp;
-
       }
     }
+
     var checkLeft = useMin(checkCol(hBoundingBox[3], dirVectors[3], 0, .25),
       checkCol(hBoundingBox[0],dirVectors[3], 0, .25));
     if (checkLeft){
@@ -127,7 +126,6 @@ var hero = {
         this.x -= .1 - checkRight;
       }
     }
-
 
     var checkDown1 = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .25),
         checkCol(hBoundingBox[3], dirVectors[2], 0, .25));
@@ -174,6 +172,7 @@ var hero = {
       this.yVel += .2;
       this.onGround = false;
       this.canJump = false;
+      cloud.init(this.x, this.y);
     }else if(this.onGround && ! this.canJump){
       return; //if jump was held since before landing, do nothing
     }else if( this.jumpHold > 0 ){ //Increase jump height if held longer
@@ -185,6 +184,7 @@ var hero = {
       this.haveDoubleJumped = true;
       this.jumpHold = this.jumpHoldMax/2;
       this.canJump = false;
+      cloud.init(this.x, this.y);
     }
   },
 
@@ -229,16 +229,17 @@ var hero = {
     this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
     this.xVel = 0;
     this.yVel = 0;
-    for(var i = 0; i<tokens.length; i++){
-      tokens[i].model.position.x = tokens[i].x;
-    }
-    for(var i = 0; i<snowPlatforms.length; i++){
-      snowPlatforms[i].model.position.y = snowPlatforms[i].y;
-      snowPlatforms[i].broken = false;
-      snowPlatforms[i].animClock = 0;
-      snowPlatforms[i].yVel = 0;
-    }
+    // for(var i = 0; i<tokens.length; i++){
+    //   tokens[i].model.position.x = tokens[i].x;
+    // }
+    // for(var i = 0; i<snowPlatforms.length; i++){
+    //   snowPlatforms[i].model.position.y = snowPlatforms[i].y;
+    //   snowPlatforms[i].broken = false;
+    //   snowPlatforms[i].animClock = 0;
+    //   snowPlatforms[i].yVel = 0;
+    // }
     game.tokens = 0;
+    cloud.model.position.x = -100;
   }
 }
 
@@ -250,13 +251,10 @@ function checkCol(pos, dir, near, far) {
   if (collisionResults.length > 0) {
 
     if(collisionResults[0].object.parentObject != undefined){
-      // console.log("onCollide triggered");
       collisionResults[0].object.parentObject.onCollide()
     }
-
-    // if(collisionResults[0].object.solid){
-      return collisionResults[0].distance;
-    //}
+    
+    return collisionResults[0].distance;
   }
 }
 

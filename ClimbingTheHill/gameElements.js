@@ -129,10 +129,9 @@ class Token{
   }
 
   onCollide(){
-    // move off the screen
-    // this.model.position.x = -100;
-    // game.tokens++;
-    console.log("collision")
+    his.model.position.x = -100;
+    this.collidableMesh.position.x = -100;
+    game.tokens++;
   }
 }
 
@@ -234,4 +233,67 @@ class Goose{
     this.model.rightLeg.rotation.x = -2;
     this.model.leftLeg.rotation.x = -2;
   }
+}
+
+
+//-------------------------- cloud ---------------------
+
+function createCloud(){
+  var cloud = {
+    x:0,
+    y:0,
+    model:undefined,
+    animClock:0,
+    done:true,
+    bs1:0,bs2:0,bs3:0,bs4:0,
+
+    init:function(x,y){
+      this.x = x;
+      this.y = y;
+      if(this.model == undefined){ this.model = createCloudModel();}
+      else{ this.changeModel();}
+      this.bs1 = this.model.blocks[0].scale.x;
+      this.bs2 = this.model.blocks[1].scale.x;
+      this.bs3 = this.model.blocks[2].scale.x;
+      this.bs4 = this.model.blocks[3].scale.x;
+      this.model.position.x = x;
+      this.model.position.y = y;
+      this.animClock = 20;
+      this.done = false;
+    },
+
+    update:function(){
+      if(this.animClock > 1){
+        this.animClock--;
+        var s = this.animClock/20;
+        var blockScale = this.bs1 * s;
+        this.model.blocks[0].scale.set(blockScale,blockScale,blockScale);
+        this.model.blocks[0].rotation.z += .05;
+        blockScale = this.bs2 * s;
+        this.model.blocks[1].scale.set(blockScale,blockScale,blockScale);
+        this.model.blocks[1].rotation.z += .05;
+        blockScale = this.bs3 * s;
+        this.model.blocks[2].scale.set(blockScale,blockScale,blockScale);
+        this.model.blocks[2].rotation.z += .05;
+        blockScale = this.bs4 * s;
+        this.model.blocks[3].scale.set(blockScale,blockScale,blockScale);
+        this.model.blocks[3].rotation.z += .05;
+      } else{
+        this.done = true;
+        this.model.position.x = -100;
+      }
+    },
+
+    changeModel:function(){
+      for(var i = 0; i<this.model.blocks.length; i++){
+        this.model.blocks[i].position.y = Math.random();
+    		this.model.blocks[i].position.z = Math.random();
+    		this.model.blocks[i].rotation.z = Math.random()*Math.PI*2;
+    		this.model.blocks[i].rotation.y = Math.random()*Math.PI*2;
+        var s = .1 + Math.random()*.9;
+    		this.model.blocks[i].scale.set(s,s,s);
+      }
+    }
+  }
+  return cloud;
 }
