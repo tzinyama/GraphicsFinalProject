@@ -130,7 +130,7 @@ class Token{
     this.model.position.set(x, y, 0);
 
     this.collidableMesh = this.model.clone();
-    console.log(this.collidableMesh);
+    // console.log(this.collidableMesh);
     this.collidableMesh.position.set(x, y, 0);
     this.collidableMesh.parentObject = this;
   }
@@ -267,12 +267,13 @@ class Sign{
   }
 
   update(){
-    // this.model.rotation.y += 0.03;
-    // this.collidableMesh.rotation.y = this.model.rotation.y;
+    this.model.
   }
 
   onCollide(){
-    resetLevel(game.level + 1);
+    if(!game.levelSwitching){
+      game.nextLevel();
+    }
   }
 }
 

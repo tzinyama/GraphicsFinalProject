@@ -203,6 +203,7 @@ var hero = {
       this.jumpHold--;
       this.yVel += this.jumpSpeed;
     } else if (this.canDoubleJump && !this.haveDoubleJumped){ //double jump
+      game.nextLevel();
       cloud.init(this.x, this.y);
       this.yVel = .15;
       this.canDoubleJump = false;

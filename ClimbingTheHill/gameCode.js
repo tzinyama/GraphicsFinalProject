@@ -141,6 +141,10 @@ function updateForFrame() {
     for(var i = 0; i < n; i++){
       levelElements[i].update();
     }
+
+    if(game.levelSwitching){
+      game.nextLevel();
+    }
   }
 }
 
