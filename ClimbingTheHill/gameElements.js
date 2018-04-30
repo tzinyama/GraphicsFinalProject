@@ -267,7 +267,7 @@ class Sign{
   }
 
   update(){
-    this.model.
+    // this.model.
   }
 
   onCollide(){

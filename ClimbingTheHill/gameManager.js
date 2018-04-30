@@ -47,7 +47,7 @@ var game = {
     }else if(this.levelSwitchClock > 0){
       this.levelSwitchClock--;
       camera.position.y += .5;
-      console.log(camera.position.y + " vs " + this.cameraY);
+      // console.log(camera.position.y + " vs " + this.cameraY);
     } else{
       this.levelSwitching = false;
       this.levelYvel = 0;
