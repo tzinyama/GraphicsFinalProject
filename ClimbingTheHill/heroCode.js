@@ -251,24 +251,6 @@ var hero = {
   die: function(){
     this.deathAnimClock = 50;
     game.deaths++;
-<<<<<<< HEAD
-    this.x = 0;
-    this.y = 0;
-    this.xVel = 0;
-    this.yVel = 0;
-    for(var i = 0; i<tokens.length; i++){
-      tokens[i].model.position.x = tokens[i].x;
-    }
-    for(var i = 0; i<snowPlatforms.length; i++){
-      snowPlatforms[i].model.position.y = snowPlatforms[i].y;
-      snowPlatforms[i].broken = false;
-      snowPlatforms[i].animClock = 0;
-      snowPlatforms[i].yVel = 0;
-    }
-    game.tokens = 0;
-    cloud.model.position.x = -100;
-
-=======
     game.update();
     // cloud.init(this.x, this.y);
     // game.deaths++;
@@ -279,7 +261,6 @@ var hero = {
     //
     // game.tokens = 0;
     // cloud.model.position.x = -100;
->>>>>>> intergration
   }
 }
 
