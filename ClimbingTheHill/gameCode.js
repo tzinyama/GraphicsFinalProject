@@ -4,28 +4,10 @@
 
 "use strict";
 
-var scene, camera, renderer;  // Three.js rendering basics.
+var scene, camera, renderer;
+var canvas;
 
-var canvas;  // The canvas on which the image is rendered.
-
-var STARTER = 0;
-var PINE = 1;
-var AXLE = 2;
-var CAR = 3;
-var WORLD = 4;
-
-// Contains the visible objects in the scene, but not the lights or camera.
-// The current model can be rotated using the keyboard.
-var models = [];
-
-// Index of the current visible objects in the scene: one of the many models
-// defined by the above constant
-var currentModel = WORLD;
-
-
-// Nodes in the scene graphs that are modified as part of the animation:
-var sphereRotator;  // The sphere is a child of this object; rotating
-                    // this object about the y-axis rotates the sphere.
+var levelElements;
 
 var animating = false;  // This is set to true when an animation is running.
 
@@ -34,13 +16,14 @@ var collidableMeshList = [];
 var dirVectors = [new THREE.Vector3(0,1,0), new THREE.Vector3(1,0,0),
     new THREE.Vector3(0,-1,0), new THREE.Vector3(-1,0,0)];
 
-var testPlat;
-
 var clock = 0;
 
+<<<<<<< HEAD
 var snowPlatforms = [];
 var geese = [];
 var tokens = [];
+=======
+>>>>>>> intergration
 var cloud;
 
 var heldKeys = {
@@ -51,23 +34,88 @@ var heldKeys = {
   space: false,
 }
 
-/*  Create the scene graph.  This function is called once, as soon as the page loads.
- *  The renderer has already been created before this function is called.
- */
+//--------------------------- level support -----------------------------------
+
+function createLevel(level){
+  let layout = levelLayouts[level];
+  collidableMeshList = [];
+
+  level = new Level(layout);
+  levelElements = level.create();
+  var n = levelElements.length;
+  for(var i = 0; i < n; i++){
+    scene.add(levelElements[i].model);
+    scene.add(levelElements[i].collidableMesh);
+
+    collidableMeshList.push(levelElements[i].collidableMesh);
+  }
+}
+
+function resetLevel(level){
+  createScene();
+  scene.add(camera);
+
+  createLights();
+  createLevel(level);
+  game.level = level;
+  render();
+}
+
+//--------------------------- level gui support -----------------------------------
+
+function createGUI(){
+  var gui = new dat.GUI();
+
+  var parameters =
+  {
+    a: function() { resetLevel(0) },
+    b: function() { resetLevel(1) },
+    c: function() { resetLevel(2) },
+    d: function() { resetLevel(3) },
+    e: function() { resetLevel(4) },
+    f: function() { resetLevel(5) }
+  };
+  // gui.add( parameters )
+  gui.add( parameters, 'a' ).name('Test Level');
+  gui.add( parameters, 'b' ).name('Level 1');
+  gui.add( parameters, 'c' ).name('Level 2');
+  gui.add( parameters, 'd' ).name('Level 3');
+  gui.add( parameters, 'e' ).name('Level 4');
+  gui.add( parameters, 'f' ).name('Level 5');
+
+  gui.open();
+
+}
+
+//--------------------------- scenes -----------------------------------
+
 function createScene() {
   // Set background color.
   renderer.setClearColor( 0xACE4FC );
   scene = new THREE.Scene();
 
-  // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
-  // camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 1, 30);
-  camera = new THREE.OrthographicCamera(-12, 12, 9, -9, 1, 30);
+  // camera = new THREE.OrthographicCamera(-12, 12, 9, -9, -10, 50);
+  camera = new THREE.OrthographicCamera(-80, 80, 60, -60, -10, 50);
+  camera.zoom = 7.5;
+  camera.updateProjectionMatrix();
+
   camera.position.z = 15;
-  camera.position.y = 4;
-  camera.lookAt(new THREE.Vector3(0,0,0));
+  camera.position.x = WIDTH / 2;
+  camera.position.y = (HEIGHT/ 2) + 5;
+  camera.lookAt(WIDTH/2, HEIGHT/2, 0);
 
-  // create some lights and add them to the scene.
+  // hero
+  hero.model.position.x = CELL_WIDTH * 2;
+  hero.model.position.y = HEIGHT;
+  scene.add(hero.model);
 
+  // cloud effect
+  cloud = createCloud();
+  cloud.init(-100);
+  scene.add(cloud.model);
+}
+
+function createLights(){
   // dim light shining from above
   scene.add( new THREE.DirectionalLight( 0xffffff, 0.4 ) );
   // a light to shine in the direction the camera faces
@@ -80,18 +128,9 @@ function createScene() {
 
   var ambientLight = new THREE.AmbientLight(0x9999dc, .5);
   scene.add(ambientLight);
-  // //create the model
-  // var model = createTree();
-  //
-  // models[STARTER] = model;
-
-  var world = createWorld();
-  models[WORLD] = world;
-  models[currentModel].rotation.set(0,0,0);
-  models[currentModel].position.y -= 2
-  scene.add(models[WORLD]);
 }
 
+<<<<<<< HEAD
 function createWorld() {
    // Create the game world
 
@@ -205,19 +244,16 @@ function createWorld() {
    return worldModel;
 
 }
+=======
+//--------------------------- animation support -----------------------------------
+>>>>>>> intergration
 
-/*  Render the scene.  This is called for each frame of the animation.
- */
 function render() {
     renderer.render(scene, camera);
 }
 
-
-/*  When an animation is in progress, this function is called just before rendering each
- *  frame of the animation, to make any changes necessary in the scene graph to prepare
- *  for that frame.
- */
 function updateForFrame() {
+<<<<<<< HEAD
 
   if(!game.paused){
     if (currentModel == WORLD) {
@@ -234,19 +270,21 @@ function updateForFrame() {
         geese[i].update();
       }
       if(!cloud.done) cloud.update();
+=======
+  if(!game.paused){
+    clock = (clock + 1)%1000000;
+
+    if(!cloud.done) cloud.update();
+    hero.update();
+
+    var n =  levelElements.length;
+    for(var i = 0; i < n; i++){
+      levelElements[i].update();
+>>>>>>> intergration
     }
   }
 }
 
-
-
-//--------------------------- animation support -----------------------------------
-
-/* This function runs the animation by calling updateForFrame() then calling render().
- * Finally, it arranges for itself to be called again to do the next frame.  When the
- * value of animating is set to false, this function does not schedule the next frame,
- * so the animation stops.
- */
 function doFrame() {
    if (animating) {
         updateForFrame();
@@ -255,10 +293,6 @@ function doFrame() {
   }
 }
 
-
-/* Responds when the setting of the "Animate" checkbox is changed.
- * This function will start or stop the animation, depending on its setting.
- */
 function doAnimateCheckbox() {
    var anim = document.getElementById("animate").checked;
    if (anim != animating) {
@@ -269,12 +303,8 @@ function doAnimateCheckbox() {
    }
 }
 
-
-
 //----------------------------- keyboard support ----------------------------------
 
-/*  Responds to user's key press.  Here, it is used to rotate the model.
- */
 function doKey(event) {
   var code = event.code;
   var rotated = true;
@@ -302,39 +332,12 @@ function doKeyUp(event) {
       case "ArrowUp":  heldKeys.up = false; jumpRelease(); break;    // up arrow
       case "Space":  heldKeys.space = false; jumpRelease(); break;
       case "ArrowDown":  heldKeys.down = false;  break;    // down arrow
+      case "Escape":  game.pause();  break;
   }
 }
 
+//-------------------------------------initialization ----------------------------------
 
-//------------------ handle the radio buttons that select the model-------------------------
-
-/*  Changes the model that is displayed, when the user changes the setting of
- *  radio buttons that are used to select the model.  The model is reset to
- *  its initial rotation.
- */
-
-function doChangeModel() {
-   // var axle = document.getElementById("axle").checked;
-   // var car = document.getElementById("car").checked;
-   var diskworld = document.getElementById("diskworld").checked;
-
-   // var newModel = axle ? AXLE : car ? CAR : diskworld ? WORLD : STARTER;
-   var newModel = WORLD;
-
-   if (newModel != currentModel) {
-      scene.remove(models[currentModel]);
-      currentModel = newModel;
-      models[currentModel].rotation.set(0.2,0,0);
-      scene.add( models[currentModel]);
-      if (!animating) {
-         render();
-      }
-   }
-}
-
-/**
- *  This init() function is called when by the onload event when the document has loaded.
- */
 function init() {
   try {
     canvas = document.getElementById("glcanvas");
@@ -353,14 +356,12 @@ function init() {
   document.addEventListener("keyup", doKeyUp, false);
   document.getElementById("animate").checked = true;
   document.getElementById("animate").onchange = doAnimateCheckbox;
-  document.getElementById("diskworld").checked = true;
-  //
-  // document.getElementById("axle").onchange = doChangeModel;
-  // document.getElementById("car").onchange = doChangeModel;
-  document.getElementById("diskworld").onchange = doChangeModel;
-  // document.getElementById("starter").onchange = doChangeModel;
 
   createScene();
+  createLights();
+  createLevel(0);
+
+  createGUI();
   render();
   doAnimateCheckbox();
 }

@@ -1,45 +1,54 @@
 <!DOCTYPE html>
-<head>
-<meta charset="UTF-8">
-<title>Climbing the Hill</title>
-<style>
-</style>
-<link rel="stylesheet" type="text/css" href="ClimbingTheHill.css" />
-<script src="three.min.js"></script>
-<script src="models.js"></script>
-<script src="heroCode.js"></script>
-<script src="goose.js"></script>
-<script src="platforms.js"></script>
-<script src="gameElements.js"></script>
-<script src="gameObject.js"></script>
-<script src="gameCode.js"></script>
+  <head>
+  <meta charset="UTF-8">
+  <title>Climbing the Hill</title>
+  <style>
+  </style>
+    <!-- Models -->
+    <script src="Models/stone_platform.js"></script>
+    <script src="Models/snow_platform.js"></script>
+    <script src="Models/token.js"></script>
+    <script src="Models/goose.js"></script>
+    <script src="Models/cloud.js"></script>
+    <script src="Models/hero.js"></script>
+    <script src="Models/wall.js"></script>
+    <script src="Models/sign.js"></script>
 
+    <!-- Libs -->
+    <script src="Libs/DAT.GUI.min.js"></script>
+    <script src="Libs/three.min.js"></script>
 
-</head>
+    <link rel="stylesheet" type="text/css" href="ClimbingTheHill.css" />
+
+    <script src="levels.js"></script>
+    <script src="heroCode.js"></script>
+    <script src="gameElements.js"></script>
+    <script src="gameManager.js"></script>
+    <script src="gameCode.js"></script>
+
+  </head>
 
 <body onload="init()">
+    <h2>Climbing the Hill</h2>
 
+    <p><b>Use arrow keys to move.</b></p>
+    <p id="pause"></p>
+    <p id="tokens">Tokens: 0</p>
+    <p id="deaths">Deaths: 0</p>
 
-<h2>Climbing the Hill</h2>
+    <p>
+      <label><input type="checkbox" id="animate">Animate</label>
 
+<<<<<<< HEAD
 <p><b>Use arrow keys to move.</b></p>
 <p id="pause"></p>
 <p id="tokens">Tokens: 0</p>
 <p id="deaths">Deaths: 0</p>
+=======
+    <div id="canvas-holder">
+      <canvas id="glcanvas" width="800" height="600"></canvas>
+    </div>
+>>>>>>> intergration
 
-<p><label><input type="checkbox" id="animate">Animate</label>
-<label style="margin-left: 80px"><input type="radio" id="diskworld" name="model">
-Show Platformer</label>
-
-<!-- <label style="margin-left: 40px"><input type="radio" id="axle" name="model">Show Axle</label>
-   <label style="margin-left: 40px"><input type="radio" id="car" name="model">Show Car</label>
-   <label style="margin-left: 40px"><input type="radio" id="starter" name="model">
-   Show starter</label> -->
-</p>
-
-<div id="canvas-holder">
-<canvas id="glcanvas" width="800" height="600"></canvas>
-</div>
-
-</body>
+  </body>
 </html>

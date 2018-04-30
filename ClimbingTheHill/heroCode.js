@@ -24,10 +24,34 @@ var hero = {
   facingRight: true,
   animTicker: 0,
   walking: false,
+  deathAnimClock: 0,
+  deathYVel: .32,
   model: createHeroModel(),
+  spawnX: 1,
+  spawnY: 1,
   update: function(){
 
-    if(this.y < -12) hero.die();
+    if(this.deathAnimClock > 0){
+
+      this.deathAnimClock--;
+      this.model.position.y += this.deathYVel;
+      this.deathYVel -= .02;
+      this.model.rotation.z += .2;
+      // this.model.rotation.x += .2;
+      if(this.deathAnimClock == 0){
+        this.deathYVel = .32;
+        this.x = this.spawnX;
+        this.y = this.spawnY; // CELL_HEIGHT * 2; // was 0;
+        this.xVel = 0;
+        this.yVel = 0;
+
+        game.tokens = 0;
+        cloud.model.position.x = -100;
+      }
+      return;
+    }
+
+    if(this.y < 0) hero.die(); // was (this.y < -12)
 
     //Model rotation
     if(this.facingRight) this.model.rotation.set(0,.7,0);
@@ -64,12 +88,12 @@ var hero = {
     hero.y += hero.yVel;
 
     //Screen edges
-    if(this.x >11.5){
-       this.x = 11.5;
+    if(this.x > WIDTH){ // was 11.5
+       this.x = WIDTH;
        this.xVel = 0;
      }
-    if(this.x <-12){
-       this.x = -12;
+    if(this.x < 0){ // was -12
+       this.x = 0;
        this.xVel = 0;
      }
 
@@ -80,7 +104,7 @@ var hero = {
     }
     //console.log(goose.model);
 
-    var offsetY = 1.9;
+    var offsetY = 0;
 
     var hBoundingBox = [
         new THREE.Vector3(this.x -.4, this.y + 1 - offsetY, 0),
@@ -106,10 +130,9 @@ var hero = {
     if (checkUp){
       if(this.yVel > 0){
           this.yVel = 0;
-          //this.y += .25-checkUp;
-
       }
     }
+
     var checkLeft = useMin(checkCol(hBoundingBox[3], dirVectors[3], 0, .25),
       checkCol(hBoundingBox[0],dirVectors[3], 0, .25));
     if (checkLeft){
@@ -127,7 +150,6 @@ var hero = {
         this.x -= .1 - checkRight;
       }
     }
-
 
     var checkDown1 = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .25),
         checkCol(hBoundingBox[3], dirVectors[2], 0, .25));
@@ -187,6 +209,7 @@ var hero = {
       this.haveDoubleJumped = true;
       this.jumpHold = this.jumpHoldMax/2;
       this.canJump = false;
+      cloud.init(this.x, this.y);
     }
   },
 
@@ -203,7 +226,7 @@ var hero = {
     }
 
     //walk cycle
-    if(this.walking){
+    if(this.walking && this.xVel != 0){
       this.model.rightArm.rotation.x = Math.sin(2.5*this.animTicker)/2;
       this.model.leftArm.rotation.x = -1* Math.sin(2.5*this.animTicker)/2;
       this.model.rightLeg.position.y = 1.5 + Math.sin(2.5*this.animTicker)/2;
@@ -226,7 +249,9 @@ var hero = {
   },
 
   die: function(){
+    this.deathAnimClock = 50;
     game.deaths++;
+<<<<<<< HEAD
     this.x = 0;
     this.y = 0;
     this.xVel = 0;
@@ -243,6 +268,18 @@ var hero = {
     game.tokens = 0;
     cloud.model.position.x = -100;
 
+=======
+    game.update();
+    // cloud.init(this.x, this.y);
+    // game.deaths++;
+    // this.x = CELL_WIDTH * 2; // was 0;
+    // this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
+    // this.xVel = 0;
+    // this.yVel = 0;
+    //
+    // game.tokens = 0;
+    // cloud.model.position.x = -100;
+>>>>>>> intergration
   }
 }
 
@@ -254,13 +291,10 @@ function checkCol(pos, dir, near, far) {
   if (collisionResults.length > 0) {
 
     if(collisionResults[0].object.parentObject != undefined){
-      // console.log("onCollide triggered");
       collisionResults[0].object.parentObject.onCollide()
     }
 
-    if(collisionResults[0].object.solid){
-      return collisionResults[0].distance;
-    }
+    return collisionResults[0].distance;
   }
 }
 
@@ -295,6 +329,7 @@ function accelLeft(n){
 
 //Called when hero touches ground
 function land(){
+  // if(hero.yVel < -.4){ cloud.init(hero.x,hero.y);}
   hero.jumped = false;
   hero.onGround = true;
   hero.wasOnGround = true;
