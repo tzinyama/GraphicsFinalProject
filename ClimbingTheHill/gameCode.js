@@ -18,9 +18,6 @@ var dirVectors = [new THREE.Vector3(0,1,0), new THREE.Vector3(1,0,0),
 
 var clock = 0;
 
-var snowPlatforms = [];
-var geese = [];
-var tokens = [];
 var cloud;
 
 var heldKeys = {
@@ -40,7 +37,6 @@ function createLevel(level){
   level = new Level(layout);
   levelElements = level.create();
   var n = levelElements.length;
-
   for(var i = 0; i < n; i++){
     scene.add(levelElements[i].model);
     scene.add(levelElements[i].collidableMesh);
@@ -55,6 +51,7 @@ function resetLevel(level){
 
   createLights();
   createLevel(level);
+  game.level = level;
   render();
 }
 
@@ -139,7 +136,6 @@ function updateForFrame() {
 
     if(!cloud.done) cloud.update();
     hero.update();
-    
 
     var n =  levelElements.length;
     for(var i = 0; i < n; i++){
@@ -218,7 +214,6 @@ function init() {
   document.addEventListener("keyup", doKeyUp, false);
   document.getElementById("animate").checked = true;
   document.getElementById("animate").onchange = doAnimateCheckbox;
-  document.getElementById("diskworld").checked = true;
 
   createScene();
   createLights();

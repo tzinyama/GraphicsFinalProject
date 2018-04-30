@@ -67,10 +67,9 @@ function createSnowPlatformModel( wid, x, y, seed ){
     icicle.position.x = wid/5;
     model.add(icicle.clone());
   }
-
   model.scale.set(1,.3,.3);
   model.position.x = x;
-  model.position.y = y;
+  model.position.y = y+CELL_HEIGHT/2;
   model.name = "snowPlatform";
 
   return model;

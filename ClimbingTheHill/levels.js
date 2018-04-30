@@ -7,8 +7,12 @@ var NUM_GRID_COLS = 20;
 var CELL_WIDTH = WIDTH / NUM_GRID_COLS;
 var CELL_HEIGHT = HEIGHT / NUM_GRID_ROWS;
 
+var PLAYER_SPAWN = '@';
+var GOAL = '$';
+
 var NOTHING = '.';
 var PLATFORM = "#";
+var PLATFORMNOSNOW = "="
 var WALL = '|';
 var COIN = "o";
 var GOOSE = "G";
@@ -25,7 +29,7 @@ var levelLayouts = [];
 
 var level1 = `
 ....................
-..oo..............o.
+..$o..............o.
 ..##.............###
 ..............G.....
 .....<->....#####...
@@ -34,31 +38,31 @@ var level1 = `
 #####....F....######
 ....................
 ................ooo.
-................G...
+.................G..
 ..F.....ooo....#####
-........<->........|
-.....|.......|..ooo|
-######.......#######
+........<->........=
+@....#.......#..ooo=
+#####=.......=#####=
 `;
 levelLayouts.push(level1);
 
 
 var level2 = `
-....................
-................|...
-.........<->..#####.
-....................
-....................
-.oo...........o.|.o.
-.##..<->......######
+................$...
+................#...
+.........<->..##=##.
 ....................
 ....................
-...oo...........o...
+.oo...........o.#.o.
+.##..<->......##=###
+....................
+....................
+...oo..@........o...
 ..######.......###..
 ....................
 ....................
-.........|..oo..|.o.
-###########....#####
+.........#..oo..#.o.
+#########=#....#=###
 `;
 levelLayouts.push(level2);
 
@@ -68,16 +72,16 @@ var level3 = `
 ....................
 .######.............
 ....................
-..oo......|.........
-....<->...#####.|.o.
-....................
+..oo......#.........
+....<->...=####.#.o.
+..................@.
 ................####
 ....................
 ....G..........o....
-..#####.....|.####..
-.............|......
-.o.|.oo......|.oo.|.
-####....<->..#######
+..#####.....#.####..
+.............#......
+.o.#.oo......=.oo.#.
+###=....<->..=####=#
 `;
 levelLayouts.push(level3);
 
@@ -89,14 +93,14 @@ var level4 = `
 ....................
 ..oo....####........
 ....................
-.####........##.|.o.
-.......<->......####
+.####........##.#.o.
+.......<->......=###
 ....................
 ....oo..............
 ..######...<->......
 ....................
-..ooo.|........|.o..
-#######....##..#####
+@.ooo.#........#.o..
+######=....##..=####
 `;
 levelLayouts.push(level4);
 
@@ -112,27 +116,27 @@ var level5 = `
 ................####
 .........oo.........
 ......<->...........
-....................
-...##...|..|......##
-##......|..|..##....
+..................@.
+...##...#..#......##
+##......=..=..##....
 ..................##
 `;
 levelLayouts.push(level5);
 
 var level6 = `
 ....................
-....oo..........o...
+..@.oo..........o...
 ..######.......###..
-....|..........|....
-....|..........|oo..
-#######....#########
+....=..........=....
+....=..........=oo..
+####=##....####=####
 ....................
 .............oo.....
 ...oo......#####....
-.######.....|......#
-............|.......
-..oo........|.......
-.####.....#####...o.
+.######.....=......#
+............=.......
+..oo........=.......
+.####.....##=##...o.
 ....................
 .................###
 `;
@@ -155,9 +159,14 @@ class Level{
       for(var col = 0; col < numCols; col++){
         char = grid[row][col];
 
-        if(!(char === NOTHING || char == LIVE_PLATFORM_START || char === LIVE_PLATFORM_END)){
+        if(!(char === NOTHING || char == LIVE_PLATFORM_START || char === LIVE_PLATFORM_END || char === PLAYER_SPAWN)){
   				// numRows-1-col: createGameElement considers row 0 to be last line of level string
           this.levelItems.push(this.createGameElement(char, numRows-1-row, col));
+        } else if(char == PLAYER_SPAWN){
+          hero.x = (col * CELL_WIDTH) + CELL_WIDTH / 2;
+          hero.y = (numRows-1-row * CELL_HEIGHT) + CELL_HEIGHT / 2;
+          hero.spawnX = hero.x;
+          hero.spawnY = hero.y;
         }
       }
     }
@@ -169,8 +178,14 @@ class Level{
     var y = (row * CELL_HEIGHT) + CELL_HEIGHT / 2;
 
     var element;
+
     if(item === PLATFORM){
-      element = new Platform(x, y, false);
+      element = new Platform(x, y, false,true);
+    } else if(item === PLATFORMNOSNOW){
+      element = new Platform(x, y, false,false);
+    }
+    else if(item === GOAL){
+      element = new Sign(x, y);
     }
     else if(item === LIVE_PLATFORM){
       element = new Platform(x, y, true); // true for isLive
@@ -187,6 +202,7 @@ class Level{
     else if(item === FLYING_GOOSE){
       element = new Goose(x, y, x-CELL_WIDTH*2, x+CELL_WIDTH*2, true);
     }
+
     return element;
   }
 }

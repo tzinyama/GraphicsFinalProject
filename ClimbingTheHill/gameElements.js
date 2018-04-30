@@ -3,10 +3,13 @@
 //-------------------------- models ---------------------
 
 var stonePlatformModel = createStonePlatformModel(0,0,false);
+var stonePlatformModelWithSnow = createStonePlatformModel(0,0,true);
 
 var snowPlatformModel = createSnowPlatformModel(3, 0, 0, 0);
 
 var tokenModel = createTokenModel();
+
+var signModel = createSignModel();
 
 var gooseModel = createGooseModel();
 
@@ -14,10 +17,11 @@ var wallModel = createWallModel(0,0, false);
 
 //---------------------------collidable meshes------------
 
-var stonePlatformCollidable = new THREE.Mesh(
-  new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT, CELL_WIDTH),
-  new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-);
+// var stonePlatformCollidable = new THREE.Mesh(
+//   new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT, CELL_WIDTH),
+//   new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
+// );
+var stonePlatformCollidable = createStonePlatformCollidable();
 
 var snowPlatformCollidable = new THREE.Mesh(
   new THREE.BoxGeometry(CELL_WIDTH * 3, .25, CELL_WIDTH),
@@ -27,7 +31,7 @@ var snowPlatformCollidable = new THREE.Mesh(
 //-------------------------- platform ---------------------
 
 class Platform{
-  constructor(x, y, isLive){
+  constructor(x, y, isLive, withSnow){
     this.x = x;
     this.y = y;
     this.isLive = isLive;
@@ -41,15 +45,24 @@ class Platform{
 
       this.model = snowPlatformModel.clone();
       this.collidableMesh = snowPlatformCollidable.clone();
+
+      this.collidableMesh.parentObject = this;
+
+      this.model.position.set(x, y+CELL_HEIGHT/2, 0);
+      this.collidableMesh.position.set(x, y+CELL_HEIGHT/2, 0);
     }
     else{
-      this.model = stonePlatformModel.clone();
+      if(withSnow || withSnow == undefined){
+        this.model = stonePlatformModelWithSnow.clone();
+      } else{
+        this.model = stonePlatformModel.clone();
+      }
       this.collidableMesh = stonePlatformCollidable.clone();
-    }
-    this.collidableMesh.parentObject = this;
+      this.collidableMesh.parentObject = this;
 
-    this.model.position.set(x, y, 0);
-    this.collidableMesh.position.set(x, y, 0);
+      this.model.position.set(x, y, 0);
+      this.collidableMesh.position.set(x, y, 0);
+    }
   }
 
   update(){
@@ -58,14 +71,14 @@ class Platform{
       this.animClock++;
       if(this.animClock<30){
         this.model.position.x = this.x + Math.sin(.6*this.animClock)/20;
-        this.model.position.y = this.y + -Math.cos(.6*this.animClock)/20;
+        this.model.position.y = (this.y+CELL_HEIGHT/2) + -Math.cos(.6*this.animClock)/20;
       }
       else if(this.animClock< 200){
         this.model.position.x = this.x
         this.yVel -= .02;
         this.model.position.y +=this.yVel;
       }else{
-        this.model.position.y = this.y;
+        this.model.position.y = this.y+CELL_HEIGHT/2;
         this.broken = false;
         this.animClock = 0;
         this.yVel = 0;
@@ -77,6 +90,7 @@ class Platform{
   onCollide(){
     this.broken = true;
   }
+
 }
 
 //-------------------------- wall ---------------------
@@ -90,7 +104,9 @@ class Wall{
     this.model = wallModel.clone();
     this.model.position.set(x, y, 0);
 
-    this.collidableMesh = this.model;
+    this.collidableMesh = stonePlatformCollidable.clone();
+    this.collidableMesh.parentObject = this;
+    this.collidableMesh.position.set(x,y,0);
   }
 
   update(){
@@ -114,8 +130,9 @@ class Token{
     this.model.position.set(x, y, 0);
 
     this.collidableMesh = this.model.clone();
+    console.log(this.collidableMesh);
     this.collidableMesh.position.set(x, y, 0);
-    this.collidableMesh.parentObject = this
+    this.collidableMesh.parentObject = this;
   }
 
   update(){
@@ -229,6 +246,33 @@ class Goose{
 
     this.model.rightLeg.rotation.x = -2;
     this.model.leftLeg.rotation.x = -2;
+  }
+}
+
+//--------------------- sign -------------------------------
+
+class Sign{
+  constructor(x, y){
+    this.x = x;
+    this.y = y;
+
+    this.model = signModel.clone();
+    this.model.position.set(x, y, 0);
+    this.collidableMesh = this.model.children[0];
+    this.collidableMesh.position.set(x,y,0);
+    this.collidableMesh.parentObject = this;
+    // this.collidableMesh = this.model.clone();
+    // this.collidableMesh.position.set(x, y, 0);
+    // this.collidableMesh.parentObject = this;
+  }
+
+  update(){
+    // this.model.rotation.y += 0.03;
+    // this.collidableMesh.rotation.y = this.model.rotation.y;
+  }
+
+  onCollide(){
+    resetLevel(game.level + 1);
   }
 }
 

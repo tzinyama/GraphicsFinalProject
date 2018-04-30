@@ -24,8 +24,32 @@ var hero = {
   facingRight: true,
   animTicker: 0,
   walking: false,
+  deathAnimClock: 0,
+  deathYVel: .32,
   model: createHeroModel(),
+  spawnX: 1,
+  spawnY: 1,
   update: function(){
+
+    if(this.deathAnimClock > 0){
+
+      this.deathAnimClock--;
+      this.model.position.y += this.deathYVel;
+      this.deathYVel -= .02;
+      this.model.rotation.z += .2;
+      // this.model.rotation.x += .2;
+      if(this.deathAnimClock == 0){
+        this.deathYVel = .32;
+        this.x = this.spawnX;
+        this.y = this.spawnY; // CELL_HEIGHT * 2; // was 0;
+        this.xVel = 0;
+        this.yVel = 0;
+
+        game.tokens = 0;
+        cloud.model.position.x = -100;
+      }
+      return;
+    }
 
     if(this.y < 0) hero.die(); // was (this.y < -12)
 
@@ -201,7 +225,7 @@ var hero = {
     }
 
     //walk cycle
-    if(this.walking){
+    if(this.walking && this.xVel != 0){
       this.model.rightArm.rotation.x = Math.sin(2.5*this.animTicker)/2;
       this.model.leftArm.rotation.x = -1* Math.sin(2.5*this.animTicker)/2;
       this.model.rightLeg.position.y = 1.5 + Math.sin(2.5*this.animTicker)/2;
@@ -224,23 +248,18 @@ var hero = {
   },
 
   die: function(){
+    this.deathAnimClock = 50;
     game.deaths++;
     game.update();
-    this.x = CELL_WIDTH * 2; // was 0;
-    this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
-    this.xVel = 0;
-    this.yVel = 0;
-    // for(var i = 0; i<tokens.length; i++){
-    //   tokens[i].model.position.x = tokens[i].x;
-    // }
-    // for(var i = 0; i<snowPlatforms.length; i++){
-    //   snowPlatforms[i].model.position.y = snowPlatforms[i].y;
-    //   snowPlatforms[i].broken = false;
-    //   snowPlatforms[i].animClock = 0;
-    //   snowPlatforms[i].yVel = 0;
-    // }
-    game.tokens = 0;
-    cloud.model.position.x = -100;
+    // cloud.init(this.x, this.y);
+    // game.deaths++;
+    // this.x = CELL_WIDTH * 2; // was 0;
+    // this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
+    // this.xVel = 0;
+    // this.yVel = 0;
+    //
+    // game.tokens = 0;
+    // cloud.model.position.x = -100;
   }
 }
 
@@ -290,6 +309,7 @@ function accelLeft(n){
 
 //Called when hero touches ground
 function land(){
+  // if(hero.yVel < -.4){ cloud.init(hero.x,hero.y);}
   hero.jumped = false;
   hero.onGround = true;
   hero.wasOnGround = true;
