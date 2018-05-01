@@ -41,7 +41,6 @@ function createLevel(level){
   levelElements = level.create();
   var n = levelElements.length;
   for(var i = 0; i < n; i++){
-    // console.log(levelElements[i]);
     scene.add(levelElements[i].model);
     scene.add(levelElements[i].collidableMesh);
 
@@ -52,6 +51,8 @@ function createLevel(level){
 function resetLevel(level){
   createScene();
   scene.add(camera);
+
+  showStartMenuText(false);
 
   createLights();
   createLevel(level);
@@ -114,6 +115,58 @@ function toggleDebugMode(){
 }
 
 //--------------------------- scenes -----------------------------------
+function startGame(){
+  game.started = true;
+  resetLevel(0);
+}
+
+function showStartMenuText(show){
+  document.getElementById("title").innerHTML = show ? "Climbing The Hill" : "";
+  document.getElementById("move_info").innerHTML = show ? "Use Arrow Keys to Move" : "";
+  document.getElementById("pause_info").innerHTML = show ? "Press Esc to Pause" : "";
+  document.getElementById("start").innerHTML = show ? "Click to Start" : "";
+
+  if(show){
+    document.addEventListener("click", startGame, false);
+  }
+  else{
+    document.removeEventListener("click", startGame, false);
+  }
+}
+
+function createStartMenu(){
+  game.started = false;
+
+  // Set background color.
+  renderer.setClearColor( 0xACE4FC );
+  scene = new THREE.Scene();
+
+  // camera = new THREE.OrthographicCamera(-12, 12, 9, -9, -10, 50);
+  camera = new THREE.OrthographicCamera(-80, 80, 60, -60, -10, 50);
+  camera.zoom = 7.5;
+  camera.updateProjectionMatrix();
+
+  camera.position.z = 15;
+  camera.position.x = WIDTH / 2;
+  camera.position.y = (HEIGHT/ 2) + 5;
+  camera.lookAt(WIDTH/2, HEIGHT/2, 0);
+
+  showStartMenuText(true);
+
+  // hero
+  var startHero = hero.model.clone();
+  startHero.position.x = 4;
+  startHero.position.y = 2;
+  startHero.scale.set(.6, .6, .6);
+  startHero.rotation.set(0,.7,0);
+  scene.add(startHero);
+
+  // goose model
+  var goose = createGooseModel()
+  goose.position.set(15, 12, 0);
+  goose.rotation.set(0, -.7, 0);
+  scene.add(goose);
+}
 
 function createScene() {
   // Set background color.
@@ -164,7 +217,7 @@ function render() {
 }
 
 function updateForFrame() {
-  if(!game.paused){
+  if(game.started && !game.paused){
     clock = (clock + 1)%1000000;
 
     if(!cloud.done) cloud.update();
@@ -229,7 +282,6 @@ function doKeyUp(event) {
       case "ArrowUp":  heldKeys.up = false; jumpRelease(); break;    // up arrow
       case "Space":  heldKeys.space = false; jumpRelease(); break;
       case "ArrowDown":  heldKeys.down = false;  break;    // down arrow
-      case "Escape":  game.pause();  break;
   }
 }
 
@@ -254,9 +306,8 @@ function init() {
   document.getElementById("animate").checked = true;
   document.getElementById("animate").onchange = doAnimateCheckbox;
 
-  createScene();
+  createStartMenu();
   createLights();
-  createLevel(0);
 
   createGUI();
   render();
