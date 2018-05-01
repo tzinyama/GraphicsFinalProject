@@ -7,8 +7,50 @@ h2 {
     color: #862633;
 }
 
-p{
+/* a {
+	text-decoration: none;
+	color: #862633;
+	outline: none;
+} */
 
+/* a:hover,
+a:focus {
+	color: #bba077;
+	outline: none;
+} */
+
+.text{
+  width: 100%;
+  text-align: left;
+  font-size: 40px;
+  pointer-events: none;
+  font-family:sans-serif;
+}
+
+#title {
+  position: absolute;
+  top: 125px;
+  left:75px;
+}
+
+#move_info {
+  position: absolute;
+  font-size: 25px;
+  top: 400px;
+  left:350px;
+}
+
+#pause_info {
+  position: absolute;
+  font-size: 25px;
+  top: 450px;
+  left:350px;
+}
+
+#start {
+  position: absolute;
+  top: 500px;
+  left:350px;
 }
 
 #pause{

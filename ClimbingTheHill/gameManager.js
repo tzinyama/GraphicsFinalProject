@@ -7,6 +7,7 @@ var game = {
   tokensSinceLevel:0,
   deaths:0,
   paused: false,
+  started: false,
   levelSwitching:false,
   levelSwitchClock:0,
   levelYVel:0,
@@ -47,7 +48,6 @@ var game = {
     }else if(this.levelSwitchClock > 0){
       this.levelSwitchClock--;
       camera.position.y += .5;
-      // console.log(camera.position.y + " vs " + this.cameraY);
     } else{
       this.levelSwitching = false;
       this.levelYvel = 0;
