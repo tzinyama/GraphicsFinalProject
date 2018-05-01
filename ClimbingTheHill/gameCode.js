@@ -28,6 +28,9 @@ var heldKeys = {
   space: false,
 }
 
+var debugMode = false;
+var testArrows = [];
+
 //--------------------------- level support -----------------------------------
 
 function createLevel(level){
@@ -87,6 +90,29 @@ function createGUI(){
 
 }
 
+//---------------------------debug mode---------------------------------
+
+function toggleDebugMode(){
+  if (debugMode){
+      debugMode = false;
+      for(var i = 0; i < levelElements.length; i++){
+        scene.remove(levelElements[i].bBoxH);
+      }
+      scene.remove(hero.bBoxH);
+      //toggleArrows();
+      console.log("disable debug");
+  }
+  else {
+    debugMode = true;
+    for(var i = 0; i < levelElements.length; i++){
+      scene.add(levelElements[i].bBoxH);
+    }
+    scene.add(hero.bBoxH);
+    //toggleArrows();
+    console.log("enable debug");
+  }
+}
+
 //--------------------------- scenes -----------------------------------
 
 function createScene() {
@@ -108,6 +134,7 @@ function createScene() {
   hero.model.position.x = CELL_WIDTH * 2;
   hero.model.position.y = HEIGHT;
   scene.add(hero.model);
+  hero.bBoxH = new THREE.BoxHelper(hero.model, 0xff00ff);
 
   // cloud effect
   cloud = createCloud();
@@ -184,6 +211,7 @@ function doKey(event) {
       case "Space":  heldKeys.space = true;  break;
       case "ArrowDown":  heldKeys.down = true;  break;    // down arrow
       case "Escape":  game.pause();  break;    // down arrow
+      case "Enter": toggleDebugMode(); break;
   }
   if (rotated) {
     event.preventDefault();  // Prevent keys from scrolling the page.

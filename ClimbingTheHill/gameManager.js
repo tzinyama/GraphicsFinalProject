@@ -28,6 +28,8 @@ var game = {
   },
 
   nextLevel:function(){
+    toggleDebugMode();
+    toggleDebugMode();
     if(!this.levelSwitching){
       this.levelSwitchClock = 150;
       this.levelSwitching = true;

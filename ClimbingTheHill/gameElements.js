@@ -63,6 +63,7 @@ class Platform{
       this.model.position.set(x, y, 0);
       this.collidableMesh.position.set(x, y, 0);
     }
+    this.bBoxH = new THREE.BoxHelper(this.model, 0xff0000);
   }
 
   update(){
@@ -85,6 +86,7 @@ class Platform{
       }
       this.collidableMesh.position.set(this.model.position.x, this.model.position.y, 0);
     }
+    this.bBoxH.update();
   }
 
   onCollide(){
@@ -117,6 +119,7 @@ class Wall{
     this.collidableMesh = stonePlatformCollidable.clone();
     this.collidableMesh.parentObject = this;
     this.collidableMesh.position.set(x,y,0);
+    this.bBoxH = new THREE.BoxHelper(this.model, 0xff0000);
   }
 
   update(){
@@ -143,11 +146,13 @@ class Token{
     // console.log(this.collidableMesh);
     this.collidableMesh.position.set(x, y, 0);
     this.collidableMesh.parentObject = this;
+    this.bBoxH = new THREE.BoxHelper(this.model, 0x00ff00);
   }
 
   update(){
     this.model.rotation.y += 0.03;
     this.collidableMesh.rotation.y = this.model.rotation.y;
+    this.bBoxH.update();
   }
 
   onCollide(){
@@ -187,6 +192,8 @@ class Goose{
     this.collidableMesh = this.model.torso.base.clone();
     this.collidableMesh.scale.set(scale, scale,scale);
     this.collidableMesh.parentObject = this;
+
+    this.bBoxH = new THREE.BoxHelper(this.model, 0xffbb00);
   }
 
   onCollide(){
@@ -217,6 +224,8 @@ class Goose{
     this.collidableMesh.position.x = this.x;
     this.collidableMesh.position.y = this.y;
     this.collidableMesh.rotation.y = this.model.rotation.y;
+
+    this.bBoxH.update();
   }
 
   animate(){
@@ -275,6 +284,7 @@ class Sign{
     // this.collidableMesh = this.model.clone();
     // this.collidableMesh.position.set(x, y, 0);
     // this.collidableMesh.parentObject = this;
+    this.bBoxH = new THREE.BoxHelper(this.collidableMesh, 0x00ff00);
   }
 
   update(){

@@ -106,28 +106,31 @@ var hero = {
     if(this.yVel > -.8){
       this.yVel -= .02;
     }
-    //console.log(goose.model);
 
-    var offsetY = 0;
+    var heroBox = new THREE.Box3();
+    var checkBox = new THREE.Box3();
+    heroBox.setFromObject(this.model);
+
+    for(var i = 0; i < levelElements.length; i++){
+      checkBox.setFromObject(levelElements[i].model);
+      if (heroBox.intersectsBox(checkBox)){
+        levelElements[i].onCollide();
+      }
+
+    }
 
     var hBoundingBox = [
-        new THREE.Vector3(this.x -.4, this.y + 1 - offsetY, 0),
-        new THREE.Vector3(this.x +.4, this.y + 1 - offsetY, 0),
-        new THREE.Vector3(this.x +.4, this.y - offsetY, 0),
-        new THREE.Vector3(this.x -.4, this.y - offsetY, 0)];
+        new THREE.Vector3(this.x -.4, this.y + 1.15, 0),
+        new THREE.Vector3(this.x +.4, this.y + 1.15, 0),
+        new THREE.Vector3(this.x +.4, this.y, 0),
+        new THREE.Vector3(this.x -.4, this.y, 0)];
 
+    var testLen = .25;
 
-    var originPoint = new THREE.Vector3(this.x, this.y, 0);
-
-    //For testing raycasts
-    //var arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[0], 1, 0xff00ff);
-    //scene.add(arrow);
-    //arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[1], 1, 0xff0000);
-    //scene.add(arrow);
-    //arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[2], 1, 0x0000ff);
-    //scene.add(arrow);
-    //arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[3], 1, 0xff8800);
-    //scene.add(arrow);
+    //arrows disabled for now
+    if(debugMode){
+      //drawDebugMode();
+    }
 
     var checkUp = useMin(checkCol(hBoundingBox[0], dirVectors[0], 0, .25),
     checkCol(hBoundingBox[1], dirVectors[0], 0, .25));
@@ -186,6 +189,8 @@ var hero = {
       this.canDoubleJump = true;                //while holding jump, don't
       this.resetDoubleJump = false;             //activate double jump instantly
     }
+
+    this.bBoxH.update();
 
     //Actually update model position
     this.model.position.x = this.x;
@@ -332,4 +337,36 @@ function jumpRelease(){
   if(!hero.canDoubleJump){
     hero.canDoubleJump = true;
   }
+}
+
+function drawDebugMode(){
+
+  var hBoundingBox = [
+    new THREE.Vector3(hero.x -.4, hero.y + 1.15, 0),
+    new THREE.Vector3(hero.x +.4, hero.y + 1.15, 0),
+    new THREE.Vector3(hero.x +.4, hero.y, 0),
+    new THREE.Vector3(hero.x -.4, hero.y, 0)];
+    var testLen = 1;
+
+    //For testing raycasts
+    scene.remove(testArrows[0], testArrows[1], testArrows[2], testArrows[3],
+      testArrows[4], testArrows[5], testArrows[6], testArrows[7]);
+    var arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[0], testLen, 0xff0000, testLen * .9, .15);
+    testArrows[0] = arrow;
+    arrow = new THREE.ArrowHelper(dirVectors[0], hBoundingBox[1], testLen, 0xff0000, testLen * .9, .15);
+    testArrows[1] = arrow;
+    arrow = new THREE.ArrowHelper(dirVectors[1], hBoundingBox[1], testLen, 0xff8800, testLen * .9, .15);
+    testArrows[2] = arrow;
+    arrow = new THREE.ArrowHelper(dirVectors[1], hBoundingBox[2], testLen, 0xff8800, testLen * .9, .15);
+    testArrows[3] = arrow;
+    var arrow = new THREE.ArrowHelper(dirVectors[2], hBoundingBox[2], testLen, 0x0000ff, testLen * .9, .15);
+    testArrows[4] = arrow;
+    arrow = new THREE.ArrowHelper(dirVectors[2], hBoundingBox[3], testLen, 0x0000ff, testLen * .9, .15);
+    testArrows[5] = arrow;
+    arrow = new THREE.ArrowHelper(dirVectors[3], hBoundingBox[0], testLen, 0x00bb00, testLen * .9, .15);
+    testArrows[6] = arrow;
+    arrow = new THREE.ArrowHelper(dirVectors[3], hBoundingBox[3], testLen, 0x00bb00, testLen * .9, .15);
+    testArrows[7] = arrow;
+    scene.add(testArrows[0], testArrows[1], testArrows[2], testArrows[3],
+      testArrows[4], testArrows[5], testArrows[6], testArrows[7]);
 }
