@@ -69,15 +69,19 @@ function createGUI(){
     c: function() { resetLevel(2) },
     d: function() { resetLevel(3) },
     e: function() { resetLevel(4) },
-    f: function() { resetLevel(5) }
+    f: function() { resetLevel(5) },
+    g: function() { resetLevel(6) },
+    h: function() { resetLevel(7) }
   };
   // gui.add( parameters )
-  gui.add( parameters, 'a' ).name('Test Level');
+  gui.add( parameters, 'a' ).name('Level 0');
   gui.add( parameters, 'b' ).name('Level 1');
   gui.add( parameters, 'c' ).name('Level 2');
   gui.add( parameters, 'd' ).name('Level 3');
   gui.add( parameters, 'e' ).name('Level 4');
   gui.add( parameters, 'f' ).name('Level 5');
+  gui.add( parameters, 'g' ).name('Level 6');
+  gui.add( parameters, 'h' ).name('Level 7');
 
   gui.open();
 
