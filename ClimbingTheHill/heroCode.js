@@ -44,8 +44,12 @@ var hero = {
         this.y = this.spawnY; // CELL_HEIGHT * 2; // was 0;
         this.xVel = 0;
         this.yVel = 0;
-
-        game.tokens = 0;
+        for(var i = 0; i<levelElements.length; i++){
+          if(levelElements[i].reset != undefined){
+            levelElements[i].reset();
+          }
+        }
+        game.tokens = game.tokensSinceLevel;
         cloud.model.position.x = -100;
       }
       return;

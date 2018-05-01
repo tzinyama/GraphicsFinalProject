@@ -38,6 +38,7 @@ function createLevel(level){
   levelElements = level.create();
   var n = levelElements.length;
   for(var i = 0; i < n; i++){
+    // console.log(levelElements[i]);
     scene.add(levelElements[i].model);
     scene.add(levelElements[i].collidableMesh);
 
@@ -52,6 +53,7 @@ function resetLevel(level){
   createLights();
   createLevel(level);
   game.level = level;
+  game.tokensSinceLevel = game.tokens;
   render();
 }
 

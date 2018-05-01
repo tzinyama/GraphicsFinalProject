@@ -91,6 +91,16 @@ class Platform{
     this.broken = true;
   }
 
+  reset(){
+    if(this.isLive){
+      this.model.position.y = this.y+CELL_HEIGHT/2;
+      this.broken = false;
+      this.animClock = 0;
+      this.yVel = 0;
+      this.collidableMesh.position.set(this.model.position.x, this.model.position.y, 0);
+    }
+  }
+
 }
 
 //-------------------------- wall ---------------------
@@ -255,6 +265,7 @@ class Sign{
   constructor(x, y){
     this.x = x;
     this.y = y;
+    this.spinning = false;
 
     this.model = signModel.clone();
     this.model.position.set(x, y, 0);
@@ -267,11 +278,12 @@ class Sign{
   }
 
   update(){
-    // this.model.
+    if(this.spinning){this.model.children[0].rotation.z -= .4;}
   }
 
   onCollide(){
     if(!game.levelSwitching){
+      this.spinning = true;
       game.nextLevel();
     }
   }
