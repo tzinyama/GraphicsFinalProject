@@ -16,12 +16,10 @@ var game = {
 
   update: function(){
     document.getElementById("tokens").innerHTML = ("Tokens: " + this.tokens + "     Deaths: " + this.deaths);
-    // document.getElementById("deaths").innerHTML = ("Deaths: " + this.deaths);
   },
 
   pause:function(){
     this.paused = !this.paused;
-    // document.getElementById("animate").checked = !this.paused;
     if(this.paused){
       document.getElementById("pause").innerHTML = ("PAUSED");
     }else{
@@ -29,39 +27,6 @@ var game = {
     }
   },
 
-  // nextLevel:function(){
-  //   toggleDebugMode();
-  //   toggleDebugMode();
-  //   if(!this.levelSwitching){
-  //     this.levelSwitchClock = 150;
-  //     this.levelSwitching = true;
-  //   }
-  //
-  //   if(this.levelSwitchClock > 100){
-  //     this.levelSwitchClock--;
-  //     this.levelYVel = 0;
-  //   }else if(this.levelSwitchClock > 50){
-  //     this.levelSwitchClock--;
-  //     this.levelYVel += .02
-  //     camera.position.y += this.levelYVel;
-  //   }else if(this.levelSwitchClock == 50){
-  //     resetLevel(this.level + 1);
-  //     this.levelSwitchClock--;
-  //     camera.position.y = this.cameraY-24.5;
-  //   }else if(this.levelSwitchClock > 0){
-  //     this.levelSwitchClock--;
-  //     camera.position.y += .5;
-  //   } else{
-  //     this.levelSwitching = false;
-  //     this.levelYvel = 0;
-  //     camera.position.y = this.cameraY;
-  //     if(this.level>=8){
-  //       showEndScreenText(true);
-  //     }else{
-  //       showEndScreenText(false);
-  //     }
-  //   }
-  // },
   goToLevel:function(n){
     toggleDebugMode();
     toggleDebugMode();

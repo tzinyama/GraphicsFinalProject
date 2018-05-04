@@ -13,7 +13,6 @@ var GOAL = '$';
 var NOTHING = '.';
 var PLATFORM = "#";
 var PLATFORMNOSNOW = "="
-var WALL = '|';
 var COIN = "o";
 var GOOSE = "G";
 var FLYING_GOOSE = "F";
@@ -265,9 +264,6 @@ class Level{
     }
     else if(item === LIVE_PLATFORM){
       element = new Platform(x, y, true); // true for isLive
-    }
-    else if(item === WALL){
-      element = new Wall(x, y);
     }
     else if(item === COIN){
   	  element = new Token(x, y);

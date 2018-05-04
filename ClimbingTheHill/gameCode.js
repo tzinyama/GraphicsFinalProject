@@ -140,12 +140,8 @@ function showEndScreenText(show){
   document.getElementById("madeBy").innerHTML = show ? "Made by Alex Rosenthal, Bryan Vaihinger, and Tino Zinyama" : "";
   var tokentext = "You got " + game.tokens + "/8 tokens";
   document.getElementById("finalTokens").innerHTML = show ?  tokentext : "";
-  // document.getElementById("start").innerHTML = show ? "Click to Start" : "";
 
-  if(show){
-    // document.addEventListener("click", startGame, false);
-  }
-  else{
+  if(!show){
     document.removeEventListener("click", startGame, false);
   }
 }
@@ -201,7 +197,6 @@ function createScene() {
   renderer.setClearColor( 0xACE4FC );
   scene = new THREE.Scene();
 
-  // camera = new THREE.OrthographicCamera(-12, 12, 9, -9, -10, 50);
   camera = new THREE.OrthographicCamera(-80, 80, 60, -60, -10, 50);
   camera.zoom = 7.5;
   camera.updateProjectionMatrix();
@@ -270,16 +265,6 @@ function doFrame() {
   }
 }
 
-// function doAnimateCheckbox() {
-//    var anim = document.getElementById("animate").checked;
-//    if (anim != animating) {
-//       animating = anim;
-//       if (animating) {
-//          doFrame();
-//       }
-//    }
-// }
-
 //----------------------------- keyboard support ----------------------------------
 
 function doKey(event) {
@@ -331,8 +316,6 @@ function init() {
 
   document.addEventListener("keydown", doKey, false);
   document.addEventListener("keyup", doKeyUp, false);
-  // document.getElementById("animate").checked = true;
-  // document.getElementById("animate").onchange = doAnimateCheckbox;
 
   createStartMenu();
   createLights();
@@ -341,5 +324,4 @@ function init() {
   render();
   animating = true;
   doFrame();
-  // doAnimateCheckbox();
 }

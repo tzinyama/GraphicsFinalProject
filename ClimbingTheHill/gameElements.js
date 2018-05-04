@@ -13,14 +13,8 @@ var signModel = createSignModel();
 
 var gooseModel = createGooseModel();
 
-var wallModel = createWallModel(0,0, false);
-
 //---------------------------collidable meshes------------
 
-// var stonePlatformCollidable = new THREE.Mesh(
-//   new THREE.BoxGeometry(CELL_WIDTH, CELL_HEIGHT, CELL_WIDTH),
-//   new THREE.MeshLambertMaterial( { color: 0x00CC55 } )
-// );
 var stonePlatformCollidable = createStonePlatformCollidable();
 
 var snowPlatformCollidable = new THREE.Mesh(
@@ -105,31 +99,6 @@ class Platform{
 
 }
 
-//-------------------------- wall ---------------------
-
-class Wall{
-  constructor(x, y){
-    this.x = x;
-    this.y = y;
-    this.isLive = false;
-
-    this.model = wallModel.clone();
-    this.model.position.set(x, y, 0);
-
-    this.collidableMesh = stonePlatformCollidable.clone();
-    this.collidableMesh.parentObject = this;
-    this.collidableMesh.position.set(x,y,0);
-    this.bBoxH = new THREE.BoxHelper(this.model, 0xff0000);
-  }
-
-  update(){
-    // do something
-  }
-
-  onCollide(){
-    // do something
-  }
-}
 
 //-------------------------- token ---------------------
 
@@ -143,7 +112,6 @@ class Token{
     this.model.position.set(x, y, 0);
 
     this.collidableMesh = this.model.clone();
-    // console.log(this.collidableMesh);
     this.collidableMesh.position.set(x, y, 0);
     this.collidableMesh.parentObject = this;
     this.bBoxH = new THREE.BoxHelper(this.model, 0x00ff00);
@@ -286,9 +254,6 @@ class Sign{
     this.collidableMesh = this.model.children[0];
     this.collidableMesh.position.set(x,y,0);
     this.collidableMesh.parentObject = this;
-    // this.collidableMesh = this.model.clone();
-    // this.collidableMesh.position.set(x, y, 0);
-    // this.collidableMesh.parentObject = this;
     this.bBoxH = new THREE.BoxHelper(this.collidableMesh, 0x00ff00);
   }
 
@@ -446,8 +411,6 @@ function createCloudModel(){
 		// set the size of the cube randomly
 		var s = .1 + Math.random()*.9;
 		m.scale.set(s,s,s);
-
-		// allow each cube to cast and to receive shadows
 
 		// add the cube to the container we first created
     model.blocks.push(m);

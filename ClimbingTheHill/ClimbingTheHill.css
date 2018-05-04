@@ -7,18 +7,6 @@ h2 {
     color: #862633;
 }
 
-/* a {
-	text-decoration: none;
-	color: #862633;
-	outline: none;
-} */
-
-/* a:hover,
-a:focus {
-	color: #bba077;
-	outline: none;
-} */
-
 .text{
   width: 100%;
   text-align: left;
@@ -70,24 +58,11 @@ a:focus {
 }
 
 #tokens{
-  /* position: absolute;
-  top: 680px;
-  left: 30px;
-  width: 100%; */
-  /* float:left; */
   margin-left:20px;
   text-align: left;
   pointer-events: none;
   font-family:sans-serif;
   white-space:pre;
-}
-
-#deaths{
-  /* float:left; */
-  margin-left:20px;
-  text-align: left;
-  pointer-events: none;
-  font-family:sans-serif;
 }
 
 #You_win{
