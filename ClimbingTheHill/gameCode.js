@@ -7,7 +7,7 @@
 var scene, camera, renderer;
 var canvas;
 
-var levelElements;
+// var levelElements;
 
 var animating = false;  // This is set to true when an animation is running.
 
@@ -38,13 +38,13 @@ function createLevel(level){
   collidableMeshList = [];
 
   level = new Level(layout);
-  levelElements = level.create();
-  var n = levelElements.length;
+  game.levelElements = level.create();
+  var n = game.levelElements.length;
   for(var i = 0; i < n; i++){
-    scene.add(levelElements[i].model);
-    scene.add(levelElements[i].collidableMesh);
+    scene.add(game.levelElements[i].model);
+    scene.add(game.levelElements[i].collidableMesh);
 
-    collidableMeshList.push(levelElements[i].collidableMesh);
+    collidableMeshList.push(game.levelElements[i].collidableMesh);
   }
 }
 
@@ -53,6 +53,7 @@ function resetLevel(level){
   scene.add(camera);
 
   showStartMenuText(false);
+
 
   createLights();
   createLevel(level);
@@ -68,14 +69,15 @@ function createGUI(){
 
   var parameters =
   {
-    a: function() { resetLevel(0) },
-    b: function() { resetLevel(1) },
-    c: function() { resetLevel(2) },
-    d: function() { resetLevel(3) },
-    e: function() { resetLevel(4) },
-    f: function() { resetLevel(5) },
-    g: function() { resetLevel(6) },
-    h: function() { resetLevel(7) }
+    a: function() { game.goToLevel(0) },
+    b: function() { game.goToLevel(1) },
+    c: function() { game.goToLevel(2) },
+    d: function() { game.goToLevel(3) },
+    e: function() { game.goToLevel(4) },
+    f: function() { game.goToLevel(5) },
+    g: function() { game.goToLevel(6) },
+    h: function() { game.goToLevel(7) },
+    i: function() { game.goToLevel(8) }
   };
   // gui.add( parameters )
   gui.add( parameters, 'a' ).name('Level 0');
@@ -86,8 +88,9 @@ function createGUI(){
   gui.add( parameters, 'f' ).name('Level 5');
   gui.add( parameters, 'g' ).name('Level 6');
   gui.add( parameters, 'h' ).name('Level 7');
+  gui.add( parameters, 'i' ).name('End Screen');
 
-  gui.open();
+  gui.close();
 
 }
 
@@ -96,8 +99,8 @@ function createGUI(){
 function toggleDebugMode(){
   if (debugMode){
       debugMode = false;
-      for(var i = 0; i < levelElements.length; i++){
-        scene.remove(levelElements[i].bBoxH);
+      for(var i = 0; i < game.levelElements.length; i++){
+        scene.remove(game.levelElements[i].bBoxH);
       }
       scene.remove(hero.bBoxH);
       scene.remove(testArrows[0], testArrows[1], testArrows[2], testArrows[3],
@@ -105,8 +108,8 @@ function toggleDebugMode(){
   }
   else {
     debugMode = true;
-    for(var i = 0; i < levelElements.length; i++){
-      scene.add(levelElements[i].bBoxH);
+    for(var i = 0; i < game.levelElements.length; i++){
+      scene.add(game.levelElements[i].bBoxH);
     }
     scene.add(hero.bBoxH);
   }
@@ -126,6 +129,21 @@ function showStartMenuText(show){
 
   if(show){
     document.addEventListener("click", startGame, false);
+  }
+  else{
+    document.removeEventListener("click", startGame, false);
+  }
+}
+function showEndScreenText(show){
+  document.getElementById("You_win").innerHTML = show ? "You win!" : "";
+  document.getElementById("thanks").innerHTML = show ? "Thanks for playing" : "";
+  document.getElementById("madeBy").innerHTML = show ? "Made by Alex Rosenthal, Bryan Vaihinger, and Tino Zinyama" : "";
+  var tokentext = "You got " + game.tokens + "/8 tokens";
+  document.getElementById("finalTokens").innerHTML = show ?  tokentext : "";
+  // document.getElementById("start").innerHTML = show ? "Click to Start" : "";
+
+  if(show){
+    // document.addEventListener("click", startGame, false);
   }
   else{
     document.removeEventListener("click", startGame, false);
@@ -153,17 +171,29 @@ function createStartMenu(){
 
   // hero
   var startHero = hero.model.clone();
-  startHero.position.x = 4;
-  startHero.position.y = 2;
-  startHero.scale.set(.6, .6, .6);
+  startHero.position.x = 3;
+  startHero.position.y = 4;
+  startHero.scale.set(.4, .4, .4);
   startHero.rotation.set(0,.7,0);
+  startHero.children[1].rotation.x = -.25;
   scene.add(startHero);
+
+  var startPlatform = createStonePlatformModel(0,0,true);
+  startPlatform.scale.set(1,1,1);
+  startPlatform.position.x = 2.75;
+  startPlatform.position.y = 1.75;
+  scene.add(startPlatform.clone());
 
   // goose model
   var goose = createGooseModel()
-  goose.position.set(15, 12, 0);
+  goose.position.set(17, 6, 0);
+  goose.scale.set(.8,.8,.8);
   goose.rotation.set(0, -.7, 0);
   scene.add(goose);
+
+  startPlatform.position.x = 17;
+  startPlatform.position.y = 2;
+  scene.add(startPlatform);
 }
 
 function createScene() {
@@ -185,7 +215,6 @@ function createScene() {
   hero.model.position.x = CELL_WIDTH * 2;
   hero.model.position.y = HEIGHT;
   scene.add(hero.model);
-  console.log(hero.model);
   hero.bBoxH = new THREE.BoxHelper(hero.model.invisibleBox, 0xff00ff);
 
   // cloud effect
@@ -222,13 +251,13 @@ function updateForFrame() {
     if(!cloud.done) cloud.update();
     hero.update();
 
-    var n =  levelElements.length;
+    var n =  game.levelElements.length;
     for(var i = 0; i < n; i++){
-      levelElements[i].update();
+      game.levelElements[i].update();
     }
 
     if(game.levelSwitching){
-      game.nextLevel();
+      game.goToLevel(game.targetLevel);
     }
   }
 }
@@ -241,15 +270,15 @@ function doFrame() {
   }
 }
 
-function doAnimateCheckbox() {
-   var anim = document.getElementById("animate").checked;
-   if (anim != animating) {
-      animating = anim;
-      if (animating) {
-         doFrame();
-      }
-   }
-}
+// function doAnimateCheckbox() {
+//    var anim = document.getElementById("animate").checked;
+//    if (anim != animating) {
+//       animating = anim;
+//       if (animating) {
+//          doFrame();
+//       }
+//    }
+// }
 
 //----------------------------- keyboard support ----------------------------------
 
@@ -302,13 +331,15 @@ function init() {
 
   document.addEventListener("keydown", doKey, false);
   document.addEventListener("keyup", doKeyUp, false);
-  document.getElementById("animate").checked = true;
-  document.getElementById("animate").onchange = doAnimateCheckbox;
+  // document.getElementById("animate").checked = true;
+  // document.getElementById("animate").onchange = doAnimateCheckbox;
 
   createStartMenu();
   createLights();
 
   createGUI();
   render();
-  doAnimateCheckbox();
+  animating = true;
+  doFrame();
+  // doAnimateCheckbox();
 }

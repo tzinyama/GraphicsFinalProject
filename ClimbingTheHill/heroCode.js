@@ -44,13 +44,14 @@ var hero = {
         this.y = this.spawnY; // CELL_HEIGHT * 2; // was 0;
         this.xVel = 0;
         this.yVel = 0;
-        for(var i = 0; i<levelElements.length; i++){
-          if(levelElements[i].reset != undefined){
-            levelElements[i].reset();
+        for(var i = 0; i<game.levelElements.length; i++){
+          if(game.levelElements[i].reset != undefined){
+            game.levelElements[i].reset();
           }
         }
         game.tokens = game.tokensSinceLevel;
         cloud.model.position.x = -100;
+        game.update();
       }
       return;
     }
@@ -192,15 +193,6 @@ var hero = {
     this.deathAnimClock = 50;
     game.deaths++;
     game.update();
-    // cloud.init(this.x, this.y);
-    // game.deaths++;
-    // this.x = CELL_WIDTH * 2; // was 0;
-    // this.y = HEIGHT; // CELL_HEIGHT * 2; // was 0;
-    // this.xVel = 0;
-    // this.yVel = 0;
-    //
-    // game.tokens = 0;
-    // cloud.model.position.x = -100;
   }
 }
 
@@ -274,10 +266,10 @@ function handleBBoxCollisions(){
   var heroBox = new THREE.Box3();
   var checkBox = new THREE.Box3();
   heroBox.setFromObject(hero.model.invisibleBox);
-  for(var i = 0; i < levelElements.length; i++){
-    checkBox.setFromObject(levelElements[i].collidableMesh);
+  for(var i = 0; i < game.levelElements.length; i++){
+    checkBox.setFromObject(game.levelElements[i].collidableMesh);
     if (heroBox.intersectsBox(checkBox)){
-      levelElements[i].onCollide();
+      game.levelElements[i].onCollide();
     }
   }
 }

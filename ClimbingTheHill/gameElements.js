@@ -161,6 +161,11 @@ class Token{
     game.tokens++;
     game.update();
   }
+
+  reset(){
+    this.model.position.x = this.x;
+    this.collidableMesh.position.x = this.x;
+  }
 }
 
 //-------------------------- goose ---------------------
@@ -294,7 +299,7 @@ class Sign{
   onCollide(){
     if(!game.levelSwitching){
       this.spinning = true;
-      game.nextLevel();
+      game.goToLevel(game.level + 1);
     }
   }
 }

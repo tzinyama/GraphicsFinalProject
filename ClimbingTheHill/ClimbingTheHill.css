@@ -25,32 +25,37 @@ a:focus {
   font-size: 40px;
   pointer-events: none;
   font-family:sans-serif;
+  font-weight:100;
 }
 
 #title {
+  font-family: "Garamond", serif;
+  font-weight:bold;
+  color: #862633;
   position: absolute;
-  top: 125px;
-  left:75px;
+  top: 100px;
+  left:150px;
+  font-size:64px;
 }
 
 #move_info {
   position: absolute;
   font-size: 25px;
-  top: 400px;
-  left:350px;
+  top: 350px;
+  left:275px;
 }
 
 #pause_info {
   position: absolute;
   font-size: 25px;
-  top: 450px;
-  left:350px;
+  top: 400px;
+  left:300px;
 }
 
 #start {
   position: absolute;
-  top: 500px;
-  left:350px;
+  top: 450px;
+  left:295px;
 }
 
 #pause{
@@ -65,21 +70,57 @@ a:focus {
 }
 
 #tokens{
-  position: absolute;
+  /* position: absolute;
   top: 680px;
   left: 30px;
-  width: 100%;
+  width: 100%; */
+  /* float:left; */
+  margin-left:20px;
+  text-align: left;
+  pointer-events: none;
+  font-family:sans-serif;
+  white-space:pre;
+}
+
+#deaths{
+  /* float:left; */
+  margin-left:20px;
   text-align: left;
   pointer-events: none;
   font-family:sans-serif;
 }
 
-#deaths{
+#You_win{
+  font-family: "Garamond", serif;
+  font-weight:bold;
   position: absolute;
-  top: 680px;
-  left: 140px;
-  width: 100%;
-  text-align: left;
-  pointer-events: none;
+  font-size: 100px;
+  top: 150px;
+  color:#862633;
+  left:205px;
+  /* text-align:center; */
+}
+#thanks{
+  position: absolute;
+  font-size: 25px;
+  top: 350px;
+  left:290px;
+  font-weight:100;
+  font-family:sans-serif;
+}
+#madeBy{
+  position: absolute;
+  font-size: 25px;
+  top: 400px;
+  left:75px;
+  font-weight:100;
+  font-family:sans-serif;
+}
+#finalTokens{
+  position: absolute;
+  font-size: 25px;
+  top: 450px;
+  left:290px;
+  font-weight:100;
   font-family:sans-serif;
 }
