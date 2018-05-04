@@ -25,7 +25,7 @@ function createHeroModel(){
   var invisibleMat = new THREE.MeshLambertMaterial(
                           {color: 0x00ff00});
   invisibleMat.transparent = true;
-  invisibleMat.opacity = 0.1;
+  invisibleMat.opacity = 0.0;
 
 
 
