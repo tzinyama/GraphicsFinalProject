@@ -63,7 +63,7 @@ class Platform{
       this.model.position.set(x, y, 0);
       this.collidableMesh.position.set(x, y, 0);
     }
-    this.bBoxH = new THREE.BoxHelper(this.model, 0xff0000);
+    this.bBoxH = new THREE.BoxHelper(this.collidableMesh, 0xff0000);
   }
 
   update(){

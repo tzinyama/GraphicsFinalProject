@@ -10,6 +10,7 @@ var Colors = {
     maroon:0x862633,
 };
 
+
 function createHeroModel(){
   var model = new THREE.Object3D();
 
@@ -21,6 +22,11 @@ function createHeroModel(){
                           {color:0xffffff});
   var denim = new THREE.MeshPhongMaterial(
                           {color:0x365777});
+  var invisibleMat = new THREE.MeshLambertMaterial(
+                          {color: 0x00ff00});
+  invisibleMat.transparent = true;
+  invisibleMat.opacity = 0.1;
+
 
 
 
@@ -132,6 +138,13 @@ function createHeroModel(){
   model.add(model.leftArm);
   // arm.position.x = -4;
   // model.add(arm);
+
+  //Used for bounding box
+  var geomBBox = new THREE.BoxGeometry(8,13.5,4);
+  model.invisibleBox = new THREE.Mesh(geomBBox, invisibleMat);
+  model.invisibleBox.position.y += 7;
+  model.add(model.invisibleBox);
+
 
   //Backpack
   var geomPack = new THREE.BoxGeometry(7,8,3);

@@ -100,8 +100,8 @@ function toggleDebugMode(){
         scene.remove(levelElements[i].bBoxH);
       }
       scene.remove(hero.bBoxH);
-      //toggleArrows();
-      console.log("disable debug");
+      scene.remove(testArrows[0], testArrows[1], testArrows[2], testArrows[3],
+        testArrows[4], testArrows[5], testArrows[6], testArrows[7]);
   }
   else {
     debugMode = true;
@@ -109,8 +109,6 @@ function toggleDebugMode(){
       scene.add(levelElements[i].bBoxH);
     }
     scene.add(hero.bBoxH);
-    //toggleArrows();
-    console.log("enable debug");
   }
 }
 
@@ -187,7 +185,8 @@ function createScene() {
   hero.model.position.x = CELL_WIDTH * 2;
   hero.model.position.y = HEIGHT;
   scene.add(hero.model);
-  hero.bBoxH = new THREE.BoxHelper(hero.model, 0xff00ff);
+  console.log(hero.model);
+  hero.bBoxH = new THREE.BoxHelper(hero.model.invisibleBox, 0xff00ff);
 
   // cloud effect
   cloud = createCloud();

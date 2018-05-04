@@ -107,83 +107,13 @@ var hero = {
       this.yVel -= .02;
     }
 
-    var heroBox = new THREE.Box3();
-    var checkBox = new THREE.Box3();
-    heroBox.setFromObject(this.model);
-
-    for(var i = 0; i < levelElements.length; i++){
-      checkBox.setFromObject(levelElements[i].model);
-      if (heroBox.intersectsBox(checkBox)){
-        levelElements[i].onCollide();
-      }
-
-    }
-
-    var hBoundingBox = [
-        new THREE.Vector3(this.x -.4, this.y + 1.15, 0),
-        new THREE.Vector3(this.x +.4, this.y + 1.15, 0),
-        new THREE.Vector3(this.x +.4, this.y, 0),
-        new THREE.Vector3(this.x -.4, this.y, 0)];
-
-    var testLen = .25;
-
-    //arrows disabled for now
+    handleBBoxCollisions();
+    handleRayCollisions();
+    //Draws arrows when on
     if(debugMode){
-      //drawDebugMode();
+      drawDebugMode();
     }
 
-    var checkUp = useMin(checkCol(hBoundingBox[0], dirVectors[0], 0, .25),
-    checkCol(hBoundingBox[1], dirVectors[0], 0, .25));
-    if (checkUp){
-      if(this.yVel > 0){
-          this.yVel = 0;
-      }
-    }
-
-    var checkLeft = useMin(checkCol(hBoundingBox[3], dirVectors[3], 0, .25),
-      checkCol(hBoundingBox[0],dirVectors[3], 0, .25));
-    if (checkLeft){
-      if (this.xVel < 0){
-        this.xVel = 0;
-        this.x += .1 - checkLeft;
-      }
-    }
-
-    var checkRight = useMin(checkCol(hBoundingBox[2], dirVectors[1], 0, .25),
-      checkCol(hBoundingBox[1],dirVectors[1], 0, .25));
-    if (checkRight){
-      if (this.xVel > 0){
-        this.xVel = 0;
-        this.x -= .1 - checkRight;
-      }
-    }
-
-    var checkDown1 = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .25),
-        checkCol(hBoundingBox[3], dirVectors[2], 0, .25));
-    if (!checkDown1){
-    var checkDown2 = useMin(checkCol(hBoundingBox[0], dirVectors[2], 0, 1.25),
-        checkCol(hBoundingBox[1], dirVectors[2], 0, 1.25));
-    }
-    if (checkDown1) {
-      if (this.yVel < 0){
-        land();
-        this.y += .1-checkDown1;
-      }
-
-    }
-    else if (checkDown2){
-      if (this.yVel < 0){
-        land();
-        this.y += 1.25-checkDown2;
-      }
-    }
-
-    else if (this.wasOnGround && !this.jumped){
-      this.wasOnGround = false;
-      this.resetDoubleJump = true;
-      this.onGround = false;
-      this.jumpHold = 0;
-    }
 
     if((!heldKeys.up && this.resetDoubleJump)){ //In case hero runs off platform
       this.canDoubleJump = true;                //while holding jump, don't
@@ -339,6 +269,85 @@ function jumpRelease(){
   }
 }
 
+
+function handleBBoxCollisions(){
+  var heroBox = new THREE.Box3();
+  var checkBox = new THREE.Box3();
+  heroBox.setFromObject(hero.model.invisibleBox);
+  for(var i = 0; i < levelElements.length; i++){
+    checkBox.setFromObject(levelElements[i].collidableMesh);
+    if (heroBox.intersectsBox(checkBox)){
+      levelElements[i].onCollide();
+    }
+  }
+}
+
+
+function handleRayCollisions(){
+  var hBoundingBox = [
+      new THREE.Vector3(hero.x -.4, hero.y + 1.15, 0),
+      new THREE.Vector3(hero.x +.4, hero.y + 1.15, 0),
+      new THREE.Vector3(hero.x +.4, hero.y, 0),
+      new THREE.Vector3(hero.x -.4, hero.y, 0)];
+
+  var testLen = .25;
+
+  var checkUp = useMin(checkCol(hBoundingBox[0], dirVectors[0], 0, .25),
+  checkCol(hBoundingBox[1], dirVectors[0], 0, .25));
+  if (checkUp){
+    if(hero.yVel > 0){
+        hero.yVel = 0;
+    }
+  }
+
+  var checkLeft = useMin(checkCol(hBoundingBox[3], dirVectors[3], 0, .25),
+    checkCol(hBoundingBox[0],dirVectors[3], 0, .25));
+  if (checkLeft){
+    if (hero.xVel < 0){
+      hero.xVel = 0;
+      hero.x += .1 - checkLeft;
+    }
+  }
+
+  var checkRight = useMin(checkCol(hBoundingBox[2], dirVectors[1], 0, .25),
+    checkCol(hBoundingBox[1],dirVectors[1], 0, .25));
+  if (checkRight){
+    if (hero.xVel > 0){
+      hero.xVel = 0;
+      hero.x -= .1 - checkRight;
+    }
+  }
+
+  var checkDown1 = useMin(checkCol(hBoundingBox[2], dirVectors[2], 0, .25),
+      checkCol(hBoundingBox[3], dirVectors[2], 0, .25));
+  if (!checkDown1){
+  var checkDown2 = useMin(checkCol(hBoundingBox[0], dirVectors[2], 0, 1.25),
+      checkCol(hBoundingBox[1], dirVectors[2], 0, 1.25));
+  }
+  if (checkDown1) {
+    if (hero.yVel < 0){
+      land();
+      hero.y += .1-checkDown1;
+    }
+
+  }
+  else if (checkDown2){
+    if (hero.yVel < 0){
+      land();
+      hero.y += 1.25-checkDown2;
+    }
+  }
+
+  else if (hero.wasOnGround && !hero.jumped){
+    hero.wasOnGround = false;
+    hero.resetDoubleJump = true;
+    hero.onGround = false;
+    hero.jumpHold = 0;
+  }
+
+}
+
+
 function drawDebugMode(){
 
   var hBoundingBox = [
@@ -346,7 +355,7 @@ function drawDebugMode(){
     new THREE.Vector3(hero.x +.4, hero.y + 1.15, 0),
     new THREE.Vector3(hero.x +.4, hero.y, 0),
     new THREE.Vector3(hero.x -.4, hero.y, 0)];
-    var testLen = 1;
+    var testLen = .5;
 
     //For testing raycasts
     scene.remove(testArrows[0], testArrows[1], testArrows[2], testArrows[3],
