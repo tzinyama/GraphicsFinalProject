@@ -3,11 +3,11 @@ We developed Climbing The Hill for our final project in the Introduction to Comp
 
 The game is a 3D platformer that employs 2D game mechanics. It is centered around climbing Colgate University’s campus hill in winter. You play as a Colgate University student trying to reach the top of the hill. Along the way, you may collect Slices (pizza) tokens and you have to avoid enemy geese.
 
-Demo
+ - [Watch Demo](http://cs.colgate.edu/~efourquet/cosc435/gallery/final_project.html)
 
-Play Online
+ - [Play Online](http://cs.colgate.edu/~efourquet/cosc435/gallery/climb-the-hill/ClimbingTheHill.html)
 
-![alt text](playOnline.PNG)
+[![alt text](playOnline.PNG)](http://cs.colgate.edu/~efourquet/cosc435/gallery/climb-the-hill/ClimbingTheHill.html)
 
 ## Modeling and Animation
 All game models were created and animated natively in <em>three.js</em> by hierarchically composing primitive 3D geometry and applying transformations to give simple motions.
